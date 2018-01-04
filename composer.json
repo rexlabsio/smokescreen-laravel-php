@@ -1,0 +1,43 @@
+{
+    "name": "rexsoftware/laravel-smokescreen",
+    "authors": [
+        {
+            "name": "Jodie Dunlop",
+            "email": "jodie.dunlop@rexsoftware.com.au"
+        }
+    ],
+    "repositories": [
+        {"type": "composer", "url": "https://repo.packagist.com/rexsoftware/"},
+        {"packagist.org": false}
+    ],
+    "require": {
+        "rexsoftware/smokescreen": "^0.1.0",
+        "laravel/framework": "^5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "RexSoftware\\Laravel\\Smokescreen\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RexSoftware\\Laravel\\Smokescreen\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "tests": "phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RexSoftware\\Laravel\\Smokescreen\\Providers\\ServiceProvider"
+            ],
+            "aliases": {
+                "Smokescreen": "RexSoftware\\Laravel\\Smokescreen\\Facades\\Facade"
+            }
+        }
+    }
+}
