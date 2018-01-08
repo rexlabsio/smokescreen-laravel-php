@@ -11,7 +11,7 @@
         {"packagist.org": false}
     ],
     "require": {
-        "rexsoftware/smokescreen": "^0.1.0",
+        "rexsoftware/smokescreen": "^0.1 || dev-master",
         "laravel/framework": "^5.4"
     },
     "require-dev": {
