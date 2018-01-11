@@ -65,7 +65,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * You should pass in an instance of a Model.
      * @param mixed|Model|array $data
      * @param callable|TransformerInterface|null $transformer
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function transform($data, $transformer = null)
     {
@@ -83,7 +83,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set an item resource to be transformed.
      * @param mixed $data
      * @param callable|TransformerInterface|null $transformer
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function item($data, $transformer = null)
     {
@@ -96,7 +96,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set a collection resource to be transformed.
      * @param mixed $data
      * @param callable|TransformerInterface|null $transformer
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function collection($data, $transformer = null)
     {
@@ -115,7 +115,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set a paginator (aka collection) resource to be transformed.
      * @param LengthAwarePaginator $paginator
      * @param callable|TransformerInterface|null $transformer
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function paginate(LengthAwarePaginator $paginator, $transformer = null)
     {
@@ -137,7 +137,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set the transformer used to transform the resource(s).
      * Proxies to the underlying \RexSoftware\Smokescreen instance.
      * @param TransformerInterface|callable $transformer
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      */
     public function transformWith($transformer)
@@ -151,7 +151,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set the serializer.
      * Proxies to the underlying \RexSoftware\Smokescreen instance.
      * @param SerializerInterface $serializer
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      */
     public function serializeWith($serializer)
@@ -165,7 +165,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set the relationship loader.
      * The relationship loader takes the relationships defined on a transformer, and eager-loads them.
      * @param RelationLoaderInterface $relationLoader
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function loadRelationsVia(RelationLoaderInterface $relationLoader)
     {
@@ -343,7 +343,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Clear the cached response object
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function clearResponse()
     {
@@ -355,7 +355,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Apply a callback to the response.  The response will be generated if it has not already been.
      * @param callable $apply
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      */
@@ -369,7 +369,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Set the include string.
      * @param string|null $includes
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function include($includes)
     {
@@ -380,7 +380,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Disable all includes
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function noIncludes()
     {
@@ -393,7 +393,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Set the Laravel request object which will be used to resolve parameters.
      * @param Request $request
-     * @return $this
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function setRequest(Request $request)
     {
