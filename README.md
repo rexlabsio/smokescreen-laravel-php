@@ -50,7 +50,7 @@ This package will be auto-discovered, and no additional configuration is necessa
 For Laravel 5.4 and below:
 
 Add `\RexSoftware\Laravel\Smokescreen\ServiceProvider::class` to the providers array in `config/app.php`
-If you would like to use the provided facade, you can add `\RexSoftware\Laravel\Smokescreen\Facade::class` to the aliases array in `config/app.php`
+If you would like to use the provided facade, you can add `\RexSoftware\Laravel\Smokescreen\Facades\Smokescreen::class` to the aliases array in `config/app.php`
 
 ## Configuration
 
