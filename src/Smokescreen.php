@@ -14,9 +14,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
+use RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException;
 use RexSoftware\Laravel\Smokescreen\Pagination\Paginator as PaginatorBridge;
 use RexSoftware\Laravel\Smokescreen\Relations\RelationLoader;
-use RexSoftware\Smokescreen\Exception\MissingTransformerException;
 use RexSoftware\Smokescreen\Relations\RelationLoaderInterface;
 use RexSoftware\Smokescreen\Resource\ResourceInterface;
 use RexSoftware\Smokescreen\Serializer\SerializerInterface;
@@ -179,7 +179,6 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Implements Laravel's Jsonable interface.
      * @param int $options
      * @return string
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      * @throws \Illuminate\Database\Eloquent\JsonEncodingException
      */
@@ -194,10 +193,22 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
+     * Returns an object representation of the transformed/serialized data.
+     * @return \stdClass
+     * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
+     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     */
+    public function toObject(): \stdClass
+    {
+        return json_decode($this->toJson(), false);
+    }
+
+    /**
      * Output the transformed and serialized data as an array.
      * Implements PHP's JsonSerializable interface.
      * @return array
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
+     * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
+     * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      * @see Smokescreen::toArray()
      */
@@ -210,8 +221,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Output the transformed and serialized data as an array.
      * This kicks off the transformation via the base Smokescreen object.
      * @return array
+     * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
+     * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
      */
     public function toArray(): array
     {
@@ -244,7 +256,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * named transformer class, and instantiate the object.
      * @param ResourceInterface $resource
      * @return TransformerInterface|null
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
+     * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      */
     protected function resolveTransformerForResource(ResourceInterface $resource)
     {
@@ -263,7 +275,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
                 null;
         }
         if (!$model) {
-            throw new MissingTransformerException('Cannot determine a valid Model for resource');
+            throw new UnresolvedTransformerException('Cannot determine a valid Model for resource');
         }
         $transformerClass = sprintf('%s\\%sTransformer',
             config('smokescreen.transformer_namespace', 'App\Transformers'),
@@ -309,7 +321,8 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Implements Laravel's Responsable contract, so that you can return smokescreen object from a controller.
      * @param Request $request
      * @return JsonResponse|\Illuminate\Http\Response
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
+     * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
+     * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      */
     public function toResponse($request)
@@ -326,8 +339,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param array $headers
      * @param int $options
      * @return JsonResponse
+     * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
+     * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
      * @see Smokescreen::toArray()
      */
     public function response(int $statusCode = 200, array $headers = [], int $options = 0): JsonResponse
@@ -356,7 +370,6 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Apply a callback to the response.  The response will be generated if it has not already been.
      * @param callable $apply
      * @return $this|\Illuminate\Contracts\Support\Responsable
-     * @throws \RexSoftware\Smokescreen\Exception\MissingTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
      */
     public function withResponse(callable $apply)
