@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "287e7c17739f2dd163528a52a18dd316",
+    "content-hash": "3383bb957407ae1c4d106510f997c83a",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -985,12 +985,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rexlabsio/smokescreen.git",
-                "reference": "0a3826a553b620538f9dc35ca05e7a254ccebb4c"
+                "reference": "c4c6dbbe474a569b1fe487e40d10a6526e7cbdb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rexlabsio/smokescreen/zipball/0a3826a553b620538f9dc35ca05e7a254ccebb4c",
-                "reference": "0a3826a553b620538f9dc35ca05e7a254ccebb4c",
+                "url": "https://api.github.com/repos/rexlabsio/smokescreen/zipball/c4c6dbbe474a569b1fe487e40d10a6526e7cbdb2",
+                "reference": "c4c6dbbe474a569b1fe487e40d10a6526e7cbdb2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1029,7 +1029,7 @@
                 "source": "https://github.com/rexlabsio/smokescreen/tree/master",
                 "issues": "https://github.com/rexlabsio/smokescreen/issues"
             },
-            "time": "2018-01-08 04:21:08"
+            "time": "2018-01-12T01:20:16+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3728,6 +3728,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.0"
+    },
     "platform-dev": []
 }
