@@ -113,7 +113,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set a paginator (aka collection) resource to be transformed.
-     * @param LengthAwarePaginator $paginator
+     * @param \Illuminate\Pagination\LengthAwarePaginator $paginator
      * @param callable|TransformerInterface|null $transformer
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
@@ -288,7 +288,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Get a Laravel request object.  If not set explicitly via setRequest(...) then
      * it will be automatically resolved out of the container. You're welcome.
-     * @return Request
+     * @return \Illuminate\Http\Request
      */
     public function request(): Request
     {
@@ -319,8 +319,8 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Generates a Response object.
      * Implements Laravel's Responsable contract, so that you can return smokescreen object from a controller.
-     * @param Request $request
-     * @return JsonResponse|\Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
      * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
@@ -338,7 +338,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param int $statusCode
      * @param array $headers
      * @param int $options
-     * @return JsonResponse
+     * @return \Illuminate\Http\JsonResponse
      * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
      * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
@@ -405,7 +405,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set the Laravel request object which will be used to resolve parameters.
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function setRequest(Request $request)
