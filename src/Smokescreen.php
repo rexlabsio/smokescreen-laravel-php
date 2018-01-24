@@ -103,7 +103,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         // Since we're nice, we'll allow a Laravel paginator to be passed to the collection method
         // and hand off to the more specific paginate method.
         if ($data instanceof LengthAwarePaginator) {
-            return $this->paginate($data);
+            return $this->paginate($data, $transformer);
         }
 
         $this->smokescreen->collection($data, $transformer);
