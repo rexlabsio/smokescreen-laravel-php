@@ -17,6 +17,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException;
 use RexSoftware\Laravel\Smokescreen\Pagination\Paginator as PaginatorBridge;
 use RexSoftware\Laravel\Smokescreen\Relations\RelationLoader;
+use RexSoftware\Laravel\Smokescreen\Transformers\EmptyTransformer;
 use RexSoftware\Smokescreen\Relations\RelationLoaderInterface;
 use RexSoftware\Smokescreen\Resource\ResourceInterface;
 use RexSoftware\Smokescreen\Serializer\SerializerInterface;
@@ -270,13 +271,19 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         } elseif ($data instanceof Collection) {
             $model = $data->first();
         } elseif ($data instanceof Paginator) {
-            $model = \count($data) > 0 && $data[0] instanceof Model ?
+            $model = \count($data) > 0 ?
                 $data[0] :
                 null;
         }
-        if (!$model) {
+
+        if ($model && !$model instanceof Model) {
             throw new UnresolvedTransformerException('Cannot determine a valid Model for resource');
         }
+
+        if (!$model) {
+            return app()->make(EmptyTransformer::class);
+        }
+
         $transformerClass = sprintf('%s\\%sTransformer',
             config('smokescreen.transformer_namespace', 'App\Transformers'),
             (new \ReflectionClass($model))->getShortName()
