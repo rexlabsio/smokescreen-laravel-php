@@ -174,6 +174,15 @@ $smokescreen->response()
 this means passing any parameters on subsequent calls will be ignored. You can use `clearResponse()` or manipulate the
 `JsonResponse` object directly.
 
+### freshResponse(): Generate a fresh Response object
+
+`$response = $smokescreen->freshResponse(int $statusCode = 200, array $headers = [], int $options = 0);`
+
+- Unlike `response()` this method returns a fresh non-cached JsonResponse object (by calling `clearResponse()` first).
+- This method returns an `\Illuminate\Http\JsonResponse` object so it is not chainable. See `withResponse()` for a
+chainable method.
+- All supported `JsonResponse` methods can be applied.
+
 ### withResponse(): Apply changes to the generated response object
 
 `$smokescreen->withResponse(callable $apply);`

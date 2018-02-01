@@ -363,6 +363,25 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
+     * Returns a fresh (uncached) response.
+     * See the response() method
+     * @param int $statusCode
+     * @param array $headers
+     * @param int $options
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \RexSoftware\Smokescreen\Exception\InvalidTransformerException
+     * @throws \RexSoftware\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
+     * @throws \RexSoftware\Smokescreen\Exception\MissingResourceException
+     * @see Smokescreen::toArray()
+     * @see Smokescreen::response()
+     */
+    public function freshResponse(int $statusCode = 200, array $headers = [], int $options = 0): JsonResponse
+    {
+        $this->clearResponse();
+        return $this->response($statusCode, $headers, $options);
+    }
+
+    /**
      * Clear the cached response object
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
