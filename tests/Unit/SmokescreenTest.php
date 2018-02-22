@@ -69,13 +69,13 @@ class SmokescreenTest extends TestCase
     }
 
     /** @test */
-    public function can_infer_resource_type_of_plain_object()
+    public function can_infer_ambiguous_resource_type_of_plain_object()
     {
         $smokescreen = Smokescreen::make();
 
         $data = new class {};
         $this->assertEquals(
-            Smokescreen::TYPE_ITEM_RESOURCE,
+            Smokescreen::TYPE_AMBIGUOUS_RESOURCE,
             $smokescreen->determineResourceType($data)
         );
     }

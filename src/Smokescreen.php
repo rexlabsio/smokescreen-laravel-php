@@ -161,11 +161,6 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
         }
 
-        if (\is_object($data)) {
-            // Treat all other objects as an item
-            return self::TYPE_ITEM_RESOURCE;
-        }
-
         // Everything else is ambiguous resource type
         return self::TYPE_AMBIGUOUS_RESOURCE;
     }
