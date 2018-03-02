@@ -1,9 +1,20 @@
 # Laravel Smokescreen
 
+
+
 ## Overview
 
-This package tightly integrates the `rexsoftware/smokescreen` (Vanilla PHP) package with the Laravel framework, to provide
-the convenience and minimal boilerplate when working with Laravel applications. 
+Laravel Smokescreen is a package for transforming your Laravel models, and other entities.
+
+- Transform API responses
+- Transform Job and Event payloads
+- Minimal boiler-plate and bootstrap
+- Supports complex relationships for embedded data
+- Supports eager loading of relationships
+- Allows transforming different types of resources
+- Can handle serializing to customisable formats
+
+This package tightly integrates the [rexsoftware/smokescreen](https://github.com/rexlabsio/smokescreen-php) (Vanilla PHP) package with the Laravel framework, to provide the convenience and minimal boilerplate when working with Laravel applications. 
 
 ## Usage
 
