@@ -1,15 +1,15 @@
 <?php
-namespace RexSoftware\Laravel\Smokescreen\Relations;
+namespace Rexlabs\Laravel\Smokescreen\Relations;
 
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
-use RexSoftware\Smokescreen\Relations\RelationLoaderInterface;
-use RexSoftware\Smokescreen\Resource\ResourceInterface;
+use Rexlabs\Smokescreen\Relations\RelationLoaderInterface;
+use Rexlabs\Smokescreen\Resource\ResourceInterface;
 
 /**
  * Laravel implementation for loading relationships.
  * Smokescreen will call this automatically for all resources.
- * @package RexSoftware\Laravel\Smokescreen\Relations
+ * @package Rexlabs\Laravel\Smokescreen\Relations
  */
 class RelationLoader implements RelationLoaderInterface
 {

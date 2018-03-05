@@ -1,7 +1,7 @@
 <?php
 
 
-namespace RexSoftware\Laravel\Smokescreen\Exceptions;
+namespace Rexlabs\Laravel\Smokescreen\Exceptions;
 
 
 class UnresolvedTransformerException extends \RuntimeException

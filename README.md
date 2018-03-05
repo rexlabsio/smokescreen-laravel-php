@@ -14,7 +14,7 @@ Laravel Smokescreen is a package for transforming your Laravel models, and other
 - Allows transforming different types of resources
 - Can handle serializing to customisable formats
 
-This package tightly integrates the [rexsoftware/smokescreen](https://github.com/rexlabsio/smokescreen-php) (Vanilla PHP) package with the Laravel framework, to provide the convenience and minimal boilerplate when working with Laravel applications. 
+This package tightly integrates the [rexlabs/smokescreen](https://github.com/rexlabsio/smokescreen-php) (Vanilla PHP) package with the Laravel framework, to provide the convenience and minimal boilerplate when working with Laravel applications. 
 
 ## Usage
 
@@ -52,7 +52,7 @@ This package is currently hosted on RexSoftware's private packagist repository. 
 
 Install package
 
-`composer require rexsoftware/laravel-smokescreen`
+`composer require rexlabs/laravel-smokescreen`
 
 For Laravel 5.5:
 
@@ -60,15 +60,15 @@ This package will be auto-discovered, and no additional configuration is necessa
 
 For Laravel 5.4 and below:
 
-Add `\RexSoftware\Laravel\Smokescreen\ServiceProvider::class` to the providers array in `config/app.php`
-If you would like to use the provided facade, you can add `\RexSoftware\Laravel\Smokescreen\Facades\Smokescreen::class` to the aliases array in `config/app.php`
+Add `\Rexlabs\Laravel\Smokescreen\ServiceProvider::class` to the providers array in `config/app.php`
+If you would like to use the provided facade, you can add `\Rexlabs\Laravel\Smokescreen\Facades\Smokescreen::class` to the aliases array in `config/app.php`
 
 ## Configuration
 
 To publish the configuration file to your `app/config` folder, run the following command:
 
 ```bash
-php artisan vendor:publish --provider='RexSoftware\Laravel\Smokescreen\Providers\ServiceProvider --tag=config'
+php artisan vendor:publish --provider='Rexlabs\Laravel\Smokescreen\Providers\ServiceProvider --tag=config'
 ```
 
 This will create `config/smokescreen.php`:
@@ -79,6 +79,10 @@ return [
     // Set the default namespace for resolving transformers when
     // they are not explicitly provided.
     'transformer_namespace' => 'App\Transformers',
+    
+    // Override the default serializer to be used.
+    // If not specified - the Smokescreen DefaultSerializer will be used.
+    'default_serializer' => null,
 
     // Set the default request parameter key which is parsed for
     // the list of includes.

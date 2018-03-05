@@ -1,9 +1,9 @@
 <?php
 
-namespace RexSoftware\Laravel\Smokescreen\Providers;
+namespace Rexlabs\Laravel\Smokescreen\Providers;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
-use RexSoftware\Laravel\Smokescreen\Smokescreen;
+use Rexlabs\Laravel\Smokescreen\Smokescreen;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -27,7 +27,7 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->app->singleton(Smokescreen::class, function () {
-            return new Smokescreen(new \RexSoftware\Smokescreen\Smokescreen());
+            return new Smokescreen(new \Rexlabs\Smokescreen\Smokescreen());
         });
         $this->app->alias(Smokescreen::class, 'smokescreen');
     }

@@ -1,14 +1,14 @@
 <?php
-namespace RexSoftware\Laravel\Smokescreen\Pagination;
+namespace Rexlabs\Laravel\Smokescreen\Pagination;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use RexSoftware\Smokescreen\Pagination\PaginatorInterface;
+use Rexlabs\Smokescreen\Pagination\PaginatorInterface;
 
 /**
  * Provides a bridge between Laravel's LengthAwarePaginator and Smokescreen's pagination interface.
  * Code is heavily based on `thephpleague/fractal` package.
  *
- * @package RexSoftware\Laravel\Smokescreen\Pagination
+ * @package Rexlabs\Laravel\Smokescreen\Pagination
  */
 class Paginator implements PaginatorInterface
 {

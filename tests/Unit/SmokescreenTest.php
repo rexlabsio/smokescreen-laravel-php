@@ -1,14 +1,13 @@
 <?php
-namespace RexSoftware\Laravel\Smokescreen\Tests\Unit;
+namespace Rexlabs\Laravel\Smokescreen\Tests\Unit;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
-use RexSoftware\Laravel\Smokescreen\Resources\CollectionResource;
-use RexSoftware\Laravel\Smokescreen\Resources\ItemResource;
-use RexSoftware\Laravel\Smokescreen\Smokescreen;
-use RexSoftware\Laravel\Smokescreen\Tests\Stubs\EloquentModelStub;
+use Rexlabs\Laravel\Smokescreen\Resources\CollectionResource;
+use Rexlabs\Laravel\Smokescreen\Resources\ItemResource;
+use Rexlabs\Laravel\Smokescreen\Smokescreen;
 
 class SmokescreenTest extends TestCase
 {
@@ -104,7 +103,6 @@ class SmokescreenTest extends TestCase
         );
     }
 
-    /** @test */
     public function can_infer_resource_type_of_paginator()
     {
         $smokescreen = Smokescreen::make();

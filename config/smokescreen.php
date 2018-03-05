@@ -1,9 +1,14 @@
 <?php
-// TODO: Copy the Laravel config/smokescreen.php to this file once complete
 return [
-
+    // Set the default namespace for resolving transformers when
+    // they are not explicitly provided.
     'transformer_namespace' => 'App\Transformers',
 
-    'include_key' => 'include',
+    // Override the default serializer to be used.
+    // If not specified - the Smokescreen DefaultSerializer will be used.
+    'default_serializer' => null,
 
+    // Set the default request parameter key which is parsed for
+    // the list of includes.
+    'include_key' => 'include',
 ];
