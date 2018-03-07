@@ -85,6 +85,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     public function transform($data, $transformer = null)
     {
         $inferredType = $this->determineResourceType($data);
+
         switch ($inferredType) {
             case self::TYPE_ITEM_RESOURCE:
                 $this->item($data, $transformer);
@@ -371,8 +372,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             throw new UnresolvedTransformerException('Cannot determine a valid Model for resource');
         }
 
-        if (!$model) {
-            return app()->make(EmptyTransformer::class);
+        if ($model === null) {
+            // Don't assign any transformer for this model/data
+            return null;
         }
 
         $transformerClass = sprintf('%s\\%sTransformer',
