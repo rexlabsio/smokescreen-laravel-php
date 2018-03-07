@@ -2,8 +2,8 @@
 
 namespace Rexlabs\Laravel\Smokescreen\Tests\Unit\Facades;
 
-use Rexlabs\Laravel\Smokescreen\Facades\Smokescreen as SmokescreenFacade;
-use Rexlabs\Laravel\Smokescreen\Smokescreen;
+use Rexlabs\Laravel\Smokescreen\Facades\Smokescreen;
+use Rexlabs\Laravel\Smokescreen\Smokescreen as LaravelSmokescreen;
 use Rexlabs\Laravel\Smokescreen\Tests\TestCase;
 use Rexlabs\Smokescreen\Serializer\DefaultSerializer;
 use Rexlabs\Smokescreen\Serializer\SerializerInterface;
@@ -13,7 +13,28 @@ class SmokescreenTest extends TestCase
     /** @test */
     public function it_returns_an_instance()
     {
-        $this->assertInstanceOf(Smokescreen::class, SmokescreenFacade::transform([]));
+        $this->assertInstanceOf(LaravelSmokescreen::class, Smokescreen::transform([]));
+    }
+
+    /** @test */
+    public function can_serialize_with_default_serializer()
+    {
+        $data = [
+            [
+                'id' => 1,
+                'name' => 'Bob',
+            ],
+            [
+                'id' => 2,
+                'name' => 'Walter',
+            ]
+        ];
+
+
+        $result = Smokescreen::transform($data)->toArray();
+        $this->assertEquals([
+            'data' => $data,
+        ], $result);
     }
 
 
@@ -25,15 +46,16 @@ class SmokescreenTest extends TestCase
         $data = [
           [
               'id' => 1,
+              'name' => 'Bob',
           ],
           [
               'id' => 2,
+              'name' => 'Walter',
           ]
         ];
 
 
-        $result = SmokescreenFacade::transform($data)->serializeWith($serializer)->toArray();
-        var_dump($result);
+        $result = Smokescreen::transform($data)->serializeWith($serializer)->toArray();
         $this->assertEquals([
             'custom_serialize' => $data,
         ], $result);

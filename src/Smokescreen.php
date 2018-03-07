@@ -68,11 +68,14 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Creates a new Smokescreen object
+     *
+     * @param \Rexlabs\Smokescreen\Smokescreen|null $smokescreen
+     *
      * @return static
      */
-    public static function make()
+    public static function make(\Rexlabs\Smokescreen\Smokescreen $smokescreen = null)
     {
-        return new static(new \Rexlabs\Smokescreen\Smokescreen());
+        return new static($smokescreen ?? new \Rexlabs\Smokescreen\Smokescreen());
     }
 
     /**
@@ -349,14 +352,21 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Determines the Transformer object to be used for a particular resource.
      * Inspects the underlying Eloquent model to determine an appropriately
      * named transformer class, and instantiate the object.
+     *
      * @param ResourceInterface $resource
-     * @return TransformerInterface|null
-     * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
+     *
+     * @return TransformerInterface|callable|null
+     * @throws UnresolvedTransformerException
      */
     public function resolveTransformerForResource(ResourceInterface $resource)
     {
-        $data = $resource->getData();
+        // When a transformer is explicitly set on the resource, return it.
+        if (($transformer = $resource->getTransformer()) !== null) {
+            return $transformer;
+        }
 
+        // Otherwise, inspect the resource data ...
+        $data = $resource->getData();
         $model = null;
         if ($data instanceof Model) {
             $model = $data;
@@ -368,20 +378,26 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             $model = \count($data) > 0 ? $data[0] : null;
         }
 
-        if ($model && !$model instanceof Model) {
-            throw new UnresolvedTransformerException('Cannot determine a valid Model for resource');
-        }
-
         if ($model === null) {
             // Don't assign any transformer for this data
             return null;
         }
 
-        $transformerClass = sprintf('%s\\%sTransformer',
-            app('config')->get('smokescreen.transformer_namespace', 'App\Transformers'),
-            (new \ReflectionClass($model))->getShortName());
+        if (!($model instanceof Model)) {
+            throw new UnresolvedTransformerException('Cannot determine a valid Model for resource');
+        }
 
-        return app()->make($transformerClass);
+        try {
+            $transformerClass = sprintf('%s\\%sTransformer',
+                app('config')->get('smokescreen.transformer_namespace', 'App\\Transformers'),
+                (new \ReflectionClass($model))->getShortName());
+
+            $transformer = app()->make($transformerClass);
+        } catch (\Exception $e) {
+            throw new UnresolvedTransformerException('Unable to resolve transformer for model: ' . \get_class($model). 0, $e);
+        }
+
+        return $transformer;
     }
 
     /**
