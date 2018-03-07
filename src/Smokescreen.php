@@ -353,7 +353,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @return TransformerInterface|null
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      */
-    protected function resolveTransformerForResource(ResourceInterface $resource)
+    public function resolveTransformerForResource(ResourceInterface $resource)
     {
         $data = $resource->getData();
 
@@ -373,7 +373,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         }
 
         if ($model === null) {
-            // Don't assign any transformer for this model/data
+            // Don't assign any transformer for this data
             return null;
         }
 
