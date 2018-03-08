@@ -16,7 +16,6 @@ class RelationLoaderTest extends TestCase
             ->method('load')
             ->with($this->equalTo(['users', 'boo']));
 
-
         $loader = new RelationLoader();
         $loader->load(new Collection($stub, $this->createTransformer()));
     }
@@ -25,7 +24,7 @@ class RelationLoaderTest extends TestCase
     {
         return new class() extends AbstractTransformer {
             protected $includes = [
-                'users' => 'relation',
+                'users'    => 'relation',
                 'comments' => 'relation:boo',
             ];
 

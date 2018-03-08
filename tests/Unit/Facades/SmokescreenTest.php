@@ -21,22 +21,20 @@ class SmokescreenTest extends TestCase
     {
         $data = [
             [
-                'id' => 1,
+                'id'   => 1,
                 'name' => 'Bob',
             ],
             [
-                'id' => 2,
+                'id'   => 2,
                 'name' => 'Walter',
-            ]
+            ],
         ];
-
 
         $result = Smokescreen::transform($data)->toArray();
         $this->assertEquals([
             'data' => $data,
         ], $result);
     }
-
 
     /** @test */
     public function can_override_serializer_via_config()
@@ -45,15 +43,14 @@ class SmokescreenTest extends TestCase
         $this->app['config']->set('smokescreen.default_serializer', \get_class($serializer));
         $data = [
           [
-              'id' => 1,
+              'id'   => 1,
               'name' => 'Bob',
           ],
           [
-              'id' => 2,
+              'id'   => 2,
               'name' => 'Walter',
-          ]
+          ],
         ];
-
 
         $result = Smokescreen::transform($data)->serializeWith($serializer)->toArray();
         $this->assertEquals([
@@ -63,13 +60,11 @@ class SmokescreenTest extends TestCase
 
     protected function createSerializer(): SerializerInterface
     {
-        return new class extends DefaultSerializer
-        {
+        return new class() extends DefaultSerializer {
             public function collection($resourceKey, array $data): array
             {
                 return ['custom_serialize' => $data];
             }
         };
     }
-
 }

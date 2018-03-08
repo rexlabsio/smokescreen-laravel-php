@@ -1,4 +1,5 @@
 <?php
+
 namespace Rexlabs\Laravel\Smokescreen\Relations;
 
 use Illuminate\Contracts\Pagination\Paginator;
@@ -9,7 +10,6 @@ use Rexlabs\Smokescreen\Resource\ResourceInterface;
 /**
  * Laravel implementation for loading relationships.
  * Smokescreen will call this automatically for all resources.
- * @package Rexlabs\Laravel\Smokescreen\Relations
  */
 class RelationLoader implements RelationLoaderInterface
 {
@@ -26,14 +26,15 @@ class RelationLoader implements RelationLoaderInterface
     }
 
     /**
-     * Return all the unique relationship keys for a resource
+     * Return all the unique relationship keys for a resource.
+     *
      * @param ResourceInterface $resource
      *
      * @return array
      */
     protected function getRelationshipKeys(ResourceInterface $resource): array
     {
-        $keys = [ ];
+        $keys = [];
         foreach ($resource->getRelationships() as $key => $relationships) {
             if (!empty($relationships)) {
                 array_push($keys, ...$relationships);
