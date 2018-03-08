@@ -26,8 +26,8 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Smokescreen::class, function () {
-            return new Smokescreen(new \Rexlabs\Smokescreen\Smokescreen(), config('smokescreen', []));
+        $this->app->singleton(Smokescreen::class, function() {
+            return new Smokescreen(new \Rexlabs\Smokescreen\Smokescreen(), config('smokescreen', [ ]));
         });
         $this->app->alias(Smokescreen::class, 'smokescreen');
     }

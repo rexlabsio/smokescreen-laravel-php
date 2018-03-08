@@ -33,7 +33,7 @@ class RelationLoader implements RelationLoaderInterface
      */
     protected function getRelationshipKeys(ResourceInterface $resource): array
     {
-        $keys = [];
+        $keys = [ ];
         foreach ($resource->getRelationships() as $key => $relationships) {
             if (!empty($relationships)) {
                 array_push($keys, ...$relationships);

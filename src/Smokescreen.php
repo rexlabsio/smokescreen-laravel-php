@@ -72,7 +72,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param \Rexlabs\Smokescreen\Smokescreen $smokescreen
      * @param array                            $config
      */
-    public function __construct(\Rexlabs\Smokescreen\Smokescreen $smokescreen, array $config = [])
+    public function __construct(\Rexlabs\Smokescreen\Smokescreen $smokescreen, array $config = [ ])
     {
         $this->smokescreen = $smokescreen;
         $this->config = $config;
@@ -86,7 +86,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @return static
      */
-    public static function make(\Rexlabs\Smokescreen\Smokescreen $smokescreen = null, array $config = [])
+    public static function make(\Rexlabs\Smokescreen\Smokescreen $smokescreen = null, array $config = [ ])
     {
         return new static($smokescreen ?? new \Rexlabs\Smokescreen\Smokescreen(), $config);
     }
@@ -221,7 +221,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         } elseif ($data instanceof Builder) {
             $data = $data->get();
         } elseif ($data instanceof Model) {
-            $data = new Collection([$data]);
+            $data = new Collection([ $data ]);
         }
 
         // Create a new collection resource
@@ -352,7 +352,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
         // Serializer may be overridden via config
         // We may be setting the serializer to null, in which case a default will be provided.
-        $serializer = $this->serializer ?? $this->config['default_serializer'] ?? null;
+        $serializer = $this->serializer ?? $this->config[ 'default_serializer' ] ?? null;
         $this->smokescreen->setSerializer($serializer);
 
         // Assign any includes.
@@ -409,7 +409,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         // We use our configuration value 'transformer_namespace' to determine where to look.
         try {
             $transformerClass = sprintf('%s\\%sTransformer',
-                $this->config['transformer_namespace'] ?? 'App\\Transformers',
+                $this->config[ 'transformer_namespace' ] ?? 'App\\Transformers',
                 (new \ReflectionClass($model))->getShortName());
             $transformer = app()->make($transformerClass);
         } catch (\Exception $e) {
@@ -448,7 +448,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             return $this->autoParseIncludes;
         }
 
-        return $this->config['include_key'] ?? 'include';
+        return $this->config[ 'include_key' ] ?? 'include';
     }
 
     /**
@@ -485,7 +485,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
      * @see Smokescreen::toArray()
      */
-    public function response(int $statusCode = 200, array $headers = [], int $options = 0): JsonResponse
+    public function response(int $statusCode = 200, array $headers = [ ], int $options = 0): JsonResponse
     {
         // Response will only be generated once. use clearResponse() to clear.
         if ($this->response === null) {
@@ -512,7 +512,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @see Smokescreen::toArray()
      * @see Smokescreen::response()
      */
-    public function freshResponse(int $statusCode = 200, array $headers = [], int $options = 0): JsonResponse
+    public function freshResponse(int $statusCode = 200, array $headers = [ ], int $options = 0): JsonResponse
     {
         $this->clearResponse();
 
@@ -555,7 +555,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      */
     public function include($includes)
     {
-        $this->includes = $includes === null ? $includes : (string)$includes;
+        $this->includes = $includes === null ? $includes : (string) $includes;
 
         return $this;
     }
