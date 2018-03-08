@@ -35,7 +35,9 @@ class RelationLoader implements RelationLoaderInterface
     {
         $keys = [];
         foreach ($resource->getRelationships() as $key => $relationships) {
-            array_push($keys, ...$relationships);
+            if (!empty($relationships)) {
+                array_push($keys, ...$relationships);
+            }
         }
 
         return array_unique($keys);

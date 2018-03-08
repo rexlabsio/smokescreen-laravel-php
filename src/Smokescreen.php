@@ -2,7 +2,6 @@
 
 namespace Rexlabs\Laravel\Smokescreen;
 
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Responsable;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -25,6 +25,7 @@ use Rexlabs\Laravel\Smokescreen\Resources\ItemResource;
 use Rexlabs\Smokescreen\Exception\MissingResourceException;
 use Rexlabs\Smokescreen\Helpers\JsonHelper;
 use Rexlabs\Smokescreen\Relations\RelationLoaderInterface;
+use Rexlabs\Smokescreen\Resource\Item;
 use Rexlabs\Smokescreen\Resource\ResourceInterface;
 use Rexlabs\Smokescreen\Serializer\SerializerInterface;
 use Rexlabs\Smokescreen\Transformer\TransformerInterface;
@@ -59,6 +60,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /** @var Response|null */
     protected $response;
 
+    /** @var ResourceInterface|null */
+    protected $resource;
+
     /** @var array */
     protected $config;
 
@@ -90,15 +94,18 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Set the resource (item or collection) data to be transformed.
      * You should pass in an instance of a Model.
+     *
      * @param mixed|Model|array                  $data
      * @param callable|TransformerInterface|null $transformer
+     *
+     * @param null                               $resourceKey
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
+     * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      */
-    public function transform($data, $transformer = null)
+    public function transform($data, $transformer = null, $resourceKey = null)
     {
-        $inferredType = $this->determineResourceType($data);
-
-        switch ($inferredType) {
+        switch ($this->determineResourceType($data)) {
             case self::TYPE_ITEM_RESOURCE:
                 $this->item($data, $transformer);
                 break;
@@ -178,67 +185,68 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set an item resource to be transformed.
+     *
      * @param mixed                              $data
      * @param callable|TransformerInterface|null $transformer
+     * @param null                               $resourceKey
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
+     * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      */
-    public function item($data, $transformer = null)
+    public function item($data, $transformer = null, $resourceKey = null)
     {
-        $this->smokescreen->item($data, $transformer);
+        $this->setResource(new Item($data, $transformer, $resourceKey));
 
         return $this;
     }
 
     /**
      * Set a collection resource to be transformed.
+     *
      * @param mixed                              $data
      * @param callable|TransformerInterface|null $transformer
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
+     * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      */
-    public function collection($data, $transformer = null)
+    public function collection($data, $transformer = null, $resourceKey = null)
     {
-        // Since we're nice, we'll allow a Laravel paginator to be passed to the collection method
-        // and hand off to the more specific paginate method.
+        $paginator = null;
+
         if ($data instanceof LengthAwarePaginator) {
-            return $this->paginate($data, $transformer);
+            $paginator = $data;
+            $data = $data->getCollection();
+        } elseif ($data instanceof Relation) {
+            $data = $data->get();
+        } elseif ($data instanceof Builder) {
+            $data = $data->get();
+        } elseif ($data instanceof Model) {
+            $data = new Collection([$data]);
         }
 
-        $this->smokescreen->collection($data, $transformer);
-
-        return $this;
-    }
-
-    /**
-     * Set a paginator (aka collection) resource to be transformed.
-     * @param \Illuminate\Pagination\LengthAwarePaginator $paginator
-     * @param callable|TransformerInterface|null          $transformer
-     * @return $this|\Illuminate\Contracts\Support\Responsable
-     */
-    public function paginate(LengthAwarePaginator $paginator, $transformer = null)
-    {
-        // Get the underlying collection
-        $collection = $paginator->getCollection();
-
-        // Assign the collection as our resource, and bridge the paginator so that we can
-        // include pagination meta-data
-        $this->smokescreen->collection($collection, $transformer, null,
-            function (\Rexlabs\Smokescreen\Resource\Collection $resource) use ($paginator) {
-                $resource->setPaginator(new PaginatorBridge($paginator));
-            });
+        // Create a new collection resource
+        $resource = new \Rexlabs\Smokescreen\Resource\Collection($data, $transformer, $resourceKey);
+        if ($paginator !== null) {
+            // Assign any paginator to the resource
+            $resource->setPaginator(new PaginatorBridge($paginator));
+        }
+        $this->setResource($resource);
 
         return $this;
     }
 
     /**
      * Set the transformer used to transform the resource(s).
-     * Proxies to the underlying \Rexlabs\Smokescreen instance.
      * @param TransformerInterface|callable|null $transformer
      * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
      */
     public function transformWith($transformer)
     {
-        $this->smokescreen->setTransformer($transformer);
+        if ($this->resource === null) {
+            throw new MissingResourceException('Cannot set transformer before setting resource');
+        }
+        $this->resource->setTransformer($transformer);
 
         return $this;
     }
@@ -271,9 +279,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Returns an object representation of the transformed/serialized data.
+     *
      * @return \stdClass
+     * @throws \Rexlabs\Smokescreen\Exception\JsonEncodeException
+     * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
+     * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
-     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
      */
     public function toObject(): \stdClass
     {
@@ -323,38 +334,46 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      */
     public function toArray(): array
     {
-        $resource = $this->smokescreen->getResource();
-        if ($resource === null) {
+        // We must have a resource provided to transform.
+        if ($this->resource === null) {
             throw new MissingResourceException('Resource is not defined');
         }
 
-        if (!$resource->hasTransformer()) {
-            // Our does not have a transformer assigned,
-            // try to resolve one based on the underlying model (if any).
-            $resource->setTransformer($this->resolveTransformerForResource($resource));
+        // If there is no transformer assigned to the resource, we'll try find one.
+        if (!$this->resource->hasTransformer()) {
+            // Try to resolve one based on the underlying model (if any).
 
+            $transformer = $this->resolveTransformerForResource($this->resource);
+            $this->resource->setTransformer($transformer);
         }
+
+        // Assign the resource in the base instance.
+        $this->smokescreen->setResource($this->resource);
 
         // Serializer may be overridden via config
+        // We may be setting the serializer to null, in which case a default will be provided.
         $serializer = $this->serializer ?? $this->config['default_serializer'] ?? null;
-
-        // We may be setting the serializer to null, in which case Smokescreen will use its default.
         $this->smokescreen->setSerializer($serializer);
 
-
+        // Assign any includes.
         if ($this->includes) {
-            // Includes have been set explicitly
+            // Includes have been set explicitly.
             $this->smokescreen->parseIncludes($this->includes);
         } elseif ($this->autoParseIncludes) {
-            // If autoParseIncludes is not false, then try to parse from the request object
+            // If autoParseIncludes is not false, then try to parse from the request object.
             $this->smokescreen->parseIncludes($this->request()->input($this->getIncludeKey()));
+        } else {
+            // Empty includes
+            $this->smokescreen->parseIncludes('');
         }
 
+        // We will provide the Laravel relationship loader if none has already
+        // been explicitly defined.
         if (!$this->smokescreen->hasRelationLoader()) {
-            // No relation loader has been set, so provide the default loader
             $this->smokescreen->setRelationLoader(new RelationLoader());
         }
 
+        // Kick off the transformation via the Smokescreen base library.
         return $this->smokescreen->toArray();
     }
 
@@ -376,23 +395,14 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         $model = null;
         if ($data instanceof Model) {
             $model = $data;
-        } elseif ($data instanceof Builder) {
-            $model = $data->getModel();
         } elseif ($data instanceof Collection) {
             $model = $data->first();
-        } elseif ($data instanceof Paginator) {
-            $model = \count($data) > 0 ? $data[0] : null;
         }
 
         // If no model can be determined from the data
         if ($model === null) {
             // Don't assign any transformer for this data
             return null;
-        }
-
-        // Our model must be an actual Eloquent model
-        if (!($model instanceof Model)) {
-            throw new UnresolvedTransformerException('Cannot determine a valid Model for resource');
         }
 
         // Cool, now let's try to find a matching transformer based on our Model class
@@ -431,7 +441,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Defaults to 'include'
      * @return string
      */
-    protected function getIncludeKey(): string
+    public function getIncludeKey(): string
     {
         if (\is_string($this->autoParseIncludes)) {
             // When set to a string value, indicates the include key
@@ -444,8 +454,11 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Generates a Response object.
      * Implements Laravel's Responsable contract, so that you can return smokescreen object from a controller.
+     *
      * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
@@ -460,10 +473,13 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Note, since the generated Response is cached, consecutive calls to response() will not change the
      * response based on the given parameters. You can use withResponse($callback) to easily modify the response,
      * or via $this->response()->setStatusCode() etc.
+     *
      * @param int   $statusCode
      * @param array $headers
      * @param int   $options
+     *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
@@ -483,10 +499,13 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Returns a fresh (uncached) response.
      * See the response() method
+     *
      * @param int   $statusCode
      * @param array $headers
      * @param int   $options
+     *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
@@ -517,6 +536,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param callable $apply
      *
      * @return $this|\Illuminate\Contracts\Support\Responsable
+     * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
@@ -560,6 +580,29 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     public function setRequest(Request $request)
     {
         $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * @return null|ResourceInterface
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
+     * @param $resource null|ResourceInterface
+     *
+     * @return Smokescreen
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+
+        // Clear any cached response when the resource changes
+        $this->clearResponse();
 
         return $this;
     }
