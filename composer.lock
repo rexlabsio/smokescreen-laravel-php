@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "588413ea7a829585c4c612fd251a6d8e",
+    "content-hash": "6d53a8c2d888c4597bd6b50c15db1702",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -896,16 +896,16 @@
         },
         {
             "name": "rexlabs/smokescreen",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rexlabsio/smokescreen-php.git",
-                "reference": "0a1b52785f0c5ad3fbd6207de17146d3b30f4ae5"
+                "reference": "af65e6ebdc4292fabd1638886c44d88665f06c1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rexlabsio/smokescreen-php/zipball/0a1b52785f0c5ad3fbd6207de17146d3b30f4ae5",
-                "reference": "0a1b52785f0c5ad3fbd6207de17146d3b30f4ae5",
+                "url": "https://api.github.com/repos/rexlabsio/smokescreen-php/zipball/af65e6ebdc4292fabd1638886c44d88665f06c1a",
+                "reference": "af65e6ebdc4292fabd1638886c44d88665f06c1a",
                 "shasum": ""
             },
             "require-dev": {
@@ -919,13 +919,27 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
             "authors": [
                 {
                     "name": "Jodie Dunlop",
                     "email": "jodie.dunlop@rexsoftware.com.au"
                 }
             ],
-            "time": "2018-03-05T01:45:20+00:00"
+            "description": "Smokescreen is a PHP library for transforming and serializing data such as API responses.",
+            "keywords": [
+                "api",
+                "fractal",
+                "hypermedia",
+                "json",
+                "serializer",
+                "smokescreen",
+                "transform",
+                "webservices"
+            ],
+            "time": "2018-03-08T00:18:26+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
