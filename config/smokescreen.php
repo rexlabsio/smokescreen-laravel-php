@@ -1,4 +1,5 @@
 <?php
+
 return [
     // Set the default namespace for resolving transformers when
     // they are not explicitly provided.

@@ -1,4 +1,5 @@
 <?php
+
 namespace Rexlabs\Laravel\Smokescreen\Tests\Stubs\Transformers;
 
 use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\Post;
@@ -14,7 +15,7 @@ class PostTransformer extends AbstractTransformer
     public function transform(Post $post)
     {
         return [
-            'id' => $post->id,
+            'id'    => $post->id,
             'title' => $post->title,
             // No body
         ];
@@ -33,7 +34,7 @@ class PostTransformer extends AbstractTransformer
             ],
             [
                 'comments' => 'I agree',
-            ]
+            ],
         ]);
     }
 }

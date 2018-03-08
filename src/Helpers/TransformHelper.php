@@ -1,4 +1,5 @@
 <?php
+
 namespace Rexlabs\Laravel\Smokescreen\Helpers;
 
 trait TransformHelper

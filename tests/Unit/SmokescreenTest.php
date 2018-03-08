@@ -39,8 +39,7 @@ class SmokescreenTest extends TestCase
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(
-            new class implements ItemResource
-            {
+            new class() implements ItemResource {
             }
         );
         $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
@@ -62,8 +61,7 @@ class SmokescreenTest extends TestCase
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(
-            new class implements CollectionResource
-            {
+            new class() implements CollectionResource {
             }
         );
         $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
@@ -79,14 +77,14 @@ class SmokescreenTest extends TestCase
     public function test_transform_on_unknown_resource_sets_item_resource()
     {
         $smokescreen = Smokescreen::make();
-        $smokescreen->transform(new \stdClass);
+        $smokescreen->transform(new \stdClass());
         $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
     }
 
     public function test_item_method_sets_item_resource()
     {
         $smokescreen = Smokescreen::make();
-        $smokescreen->item(new \stdClass);
+        $smokescreen->item(new \stdClass());
         $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
     }
 
@@ -137,13 +135,11 @@ class SmokescreenTest extends TestCase
         $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-
     public function test_infer_resource_type_of_declared_item_resource()
     {
         $smokescreen = Smokescreen::make();
 
-        $data = new class implements ItemResource
-        {
+        $data = new class() implements ItemResource {
         };
         $this->assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
     }
@@ -152,8 +148,7 @@ class SmokescreenTest extends TestCase
     {
         $smokescreen = Smokescreen::make();
 
-        $data = new class implements CollectionResource
-        {
+        $data = new class() implements CollectionResource {
         };
         $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
     }
@@ -163,8 +158,7 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make();
 
         // Eloquent model
-        $data = new class extends Model
-        {
+        $data = new class() extends Model {
         };
         $this->assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
 
@@ -177,26 +171,22 @@ class SmokescreenTest extends TestCase
         $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Anonymous class
-        $data = new class
-        {
+        $data = new class() {
         };
         $this->assertEquals(Smokescreen::TYPE_AMBIGUOUS_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Laravel collection
-        $data = new class extends Collection
-        {
+        $data = new class() extends Collection {
         };
         $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Eloquent collection
-        $data = new class extends \Illuminate\Database\Eloquent\Collection
-        {
+        $data = new class() extends \Illuminate\Database\Eloquent\Collection {
         };
         $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Paginator
-        $data = new class([], 0, 15) extends LengthAwarePaginator
-        {
+        $data = new class([], 0, 15) extends LengthAwarePaginator {
         };
         $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
@@ -335,7 +325,7 @@ class SmokescreenTest extends TestCase
         $this->createSchemas();
         $this->createModels();
 
-         $smokescreen = Smokescreen::make(null, [
+        $smokescreen = Smokescreen::make(null, [
                  'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
             ])
             ->transform(Post::first())
@@ -437,8 +427,7 @@ class SmokescreenTest extends TestCase
 
     public function test_include_key_can_be_overridden_in_sub_class()
     {
-        $smokescreen = new class(new \Rexlabs\Smokescreen\Smokescreen()) extends Smokescreen
-        {
+        $smokescreen = new class(new \Rexlabs\Smokescreen\Smokescreen()) extends Smokescreen {
             protected $autoParseIncludes = 'auto_parse_key';
         };
 
@@ -539,15 +528,13 @@ class SmokescreenTest extends TestCase
 
     protected function createModel(): Model
     {
-        return new class () extends Model
-        {
+        return new class() extends Model {
         };
     }
 
     protected function createTransformer(): AbstractTransformer
     {
-        return new class extends AbstractTransformer
-        {
+        return new class() extends AbstractTransformer {
             protected $includes = [
                 'user',
                 'comments',
@@ -581,8 +568,7 @@ class SmokescreenTest extends TestCase
 
     protected function createSerializer(): DefaultSerializer
     {
-        return new class extends DefaultSerializer
-        {
+        return new class() extends DefaultSerializer {
             public function collection($resourceKey, array $data): array
             {
                 return ['custom_serialize' => $data];
@@ -594,33 +580,33 @@ class SmokescreenTest extends TestCase
     {
         Schema::create(
             'users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('email')
+                $table->increments('id');
+                $table->string('name');
+                $table->string('email')
                 ->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        }
+                $table->string('password');
+                $table->rememberToken();
+                $table->timestamps();
+            }
         );
         Schema::create(
             'posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->string('title');
-            $table->text('body');
-            $table->timestamps();
-        }
+                $table->increments('id');
+                $table->unsignedInteger('user_id');
+                $table->string('title');
+                $table->text('body');
+                $table->timestamps();
+            }
         );
         Schema::create(
             'comments', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('post_id');
-            $table->unsignedInteger('user_id');
-            $table->string('title');
-            $table->text('comments');
-            $table->timestamps();
-        }
+                $table->increments('id');
+                $table->unsignedInteger('post_id');
+                $table->unsignedInteger('user_id');
+                $table->string('title');
+                $table->text('comments');
+                $table->timestamps();
+            }
         );
     }
 

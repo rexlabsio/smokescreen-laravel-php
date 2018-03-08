@@ -33,6 +33,7 @@ use Rexlabs\Smokescreen\Transformer\TransformerInterface;
 /**
  * Smokescreen for Laravel.
  * Tightly integrates the rexlabs/smokescreen resource transformation library with the Laravel framework.
+ *
  * @author    Jodie Dunlop <jodie.dunlop@rexsoftware.com.au>
  * @copyright Rex Software 2018
  */
@@ -72,21 +73,21 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param \Rexlabs\Smokescreen\Smokescreen $smokescreen
      * @param array                            $config
      */
-    public function __construct(\Rexlabs\Smokescreen\Smokescreen $smokescreen, array $config = [ ])
+    public function __construct(\Rexlabs\Smokescreen\Smokescreen $smokescreen, array $config = [])
     {
         $this->smokescreen = $smokescreen;
         $this->config = $config;
     }
 
     /**
-     * Creates a new Smokescreen object
+     * Creates a new Smokescreen object.
      *
      * @param \Rexlabs\Smokescreen\Smokescreen|null $smokescreen
      * @param array                                 $config
      *
      * @return static
      */
-    public static function make(\Rexlabs\Smokescreen\Smokescreen $smokescreen = null, array $config = [ ])
+    public static function make(\Rexlabs\Smokescreen\Smokescreen $smokescreen = null, array $config = [])
     {
         return new static($smokescreen ?? new \Rexlabs\Smokescreen\Smokescreen(), $config);
     }
@@ -97,11 +98,11 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param mixed|Model|array                  $data
      * @param callable|TransformerInterface|null $transformer
-     *
      * @param null                               $resourceKey
      *
-     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function transform($data, $transformer = null, $resourceKey = null)
     {
@@ -121,8 +122,8 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
-     *
      * @param mixed $data
+     *
      * @return string
      */
     public function determineResourceType($data): string
@@ -176,7 +177,6 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
             // All other arrays are considered collections
             return self::TYPE_COLLECTION_RESOURCE;
-
         }
 
         // Everything else is ambiguous resource type
@@ -190,8 +190,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param callable|TransformerInterface|null $transformer
      * @param null                               $resourceKey
      *
-     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function item($data, $transformer = null, $resourceKey = null)
     {
@@ -206,8 +207,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param mixed                              $data
      * @param callable|TransformerInterface|null $transformer
      *
-     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function collection($data, $transformer = null, $resourceKey = null)
     {
@@ -221,7 +223,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         } elseif ($data instanceof Builder) {
             $data = $data->get();
         } elseif ($data instanceof Model) {
-            $data = new Collection([ $data ]);
+            $data = new Collection([$data]);
         }
 
         // Create a new collection resource
@@ -237,9 +239,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set the transformer used to transform the resource(s).
+     *
      * @param TransformerInterface|callable|null $transformer
-     * @return $this|\Illuminate\Contracts\Support\Responsable
+     *
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function transformWith($transformer)
     {
@@ -253,9 +258,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set the default serializer to be used for resources which do not have an explictly set serializer.
+     *
      * @param SerializerInterface|null $serializer
-     * @return $this|\Illuminate\Contracts\Support\Responsable
+     *
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function serializeWith($serializer)
     {
@@ -267,7 +275,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Set the relationship loader.
      * The relationship loader takes the relationships defined on a transformer, and eager-loads them.
+     *
      * @param RelationLoaderInterface $relationLoader
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function loadRelationsVia(RelationLoaderInterface $relationLoader)
@@ -280,11 +290,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Returns an object representation of the transformed/serialized data.
      *
-     * @return \stdClass
      * @throws \Rexlabs\Smokescreen\Exception\JsonEncodeException
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return \stdClass
      */
     public function toObject(): \stdClass
     {
@@ -297,11 +308,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param int $options
      *
-     * @return string
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\JsonEncodeException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return string
      */
     public function toJson($options = 0): string
     {
@@ -311,10 +323,13 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Output the transformed and serialized data as an array.
      * Implements PHP's JsonSerializable interface.
-     * @return array
+     *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return array
+     *
      * @see Smokescreen::toArray()
      */
     public function jsonSerialize(): array
@@ -326,11 +341,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Output the transformed and serialized data as an array.
      * This kicks off the transformation via the base Smokescreen object.
      *
-     * @return array
      * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return array
      */
     public function toArray(): array
     {
@@ -352,7 +368,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
         // Serializer may be overridden via config
         // We may be setting the serializer to null, in which case a default will be provided.
-        $serializer = $this->serializer ?? $this->config[ 'default_serializer' ] ?? null;
+        $serializer = $this->serializer ?? $this->config['default_serializer'] ?? null;
         $this->smokescreen->setSerializer($serializer);
 
         // Assign any includes.
@@ -384,8 +400,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param ResourceInterface $resource
      *
-     * @return TransformerInterface|callable|null
      * @throws UnresolvedTransformerException
+     *
+     * @return TransformerInterface|callable|null
      */
     protected function resolveTransformerForResource(ResourceInterface $resource)
     {
@@ -402,18 +419,18 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         // If no model can be determined from the data
         if ($model === null) {
             // Don't assign any transformer for this data
-            return null;
+            return;
         }
 
         // Cool, now let's try to find a matching transformer based on our Model class
         // We use our configuration value 'transformer_namespace' to determine where to look.
         try {
             $transformerClass = sprintf('%s\\%sTransformer',
-                $this->config[ 'transformer_namespace' ] ?? 'App\\Transformers',
+                $this->config['transformer_namespace'] ?? 'App\\Transformers',
                 (new \ReflectionClass($model))->getShortName());
             $transformer = app()->make($transformerClass);
         } catch (\Exception $e) {
-            throw new UnresolvedTransformerException('Unable to resolve transformer for model: ' . \get_class($model), 0, $e);
+            throw new UnresolvedTransformerException('Unable to resolve transformer for model: '.\get_class($model), 0, $e);
         }
 
         return $transformer;
@@ -422,6 +439,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Get a Laravel request object.  If not set explicitly via setRequest(...) then
      * it will be automatically resolved out of the container. You're welcome.
+     *
      * @return \Illuminate\Http\Request
      */
     public function request(): Request
@@ -438,7 +456,8 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Determine which key is used for the includes when passing from the Request
      * If the autoParseIncludes property is set to a string value this will be used
      * otherwise, the 'include_key' from the configuration.
-     * Defaults to 'include'
+     * Defaults to 'include'.
+     *
      * @return string
      */
     public function getIncludeKey(): string
@@ -448,20 +467,21 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             return $this->autoParseIncludes;
         }
 
-        return $this->config[ 'include_key' ] ?? 'include';
+        return $this->config['include_key'] ?? 'include';
     }
 
     /**
      * Generates a Response object.
      * Implements Laravel's Responsable contract, so that you can return smokescreen object from a controller.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function toResponse($request)
     {
@@ -478,14 +498,16 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @param array $headers
      * @param int   $options
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
      * @see Smokescreen::toArray()
      */
-    public function response(int $statusCode = 200, array $headers = [ ], int $options = 0): JsonResponse
+    public function response(int $statusCode = 200, array $headers = [], int $options = 0): JsonResponse
     {
         // Response will only be generated once. use clearResponse() to clear.
         if ($this->response === null) {
@@ -493,26 +515,27 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         }
 
         return $this->response;
-
     }
 
     /**
      * Returns a fresh (uncached) response.
-     * See the response() method
+     * See the response() method.
      *
      * @param int   $statusCode
      * @param array $headers
      * @param int   $options
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
      * @see Smokescreen::toArray()
      * @see Smokescreen::response()
      */
-    public function freshResponse(int $statusCode = 200, array $headers = [ ], int $options = 0): JsonResponse
+    public function freshResponse(int $statusCode = 200, array $headers = [], int $options = 0): JsonResponse
     {
         $this->clearResponse();
 
@@ -520,7 +543,8 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
-     * Clear the cached response object
+     * Clear the cached response object.
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function clearResponse()
@@ -535,11 +559,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param callable $apply
      *
-     * @return $this|\Illuminate\Contracts\Support\Responsable
      * @throws \Rexlabs\Smokescreen\Exception\UnhandledResourceType
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function withResponse(callable $apply)
     {
@@ -550,7 +575,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set the include string.
+     *
      * @param string|null $includes
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function include($includes)
@@ -561,7 +588,8 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
-     * Disable all includes
+     * Disable all includes.
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function noIncludes()
@@ -574,7 +602,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /**
      * Set the Laravel request object which will be used to resolve parameters.
+     *
      * @param \Illuminate\Http\Request $request
+     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function setRequest(Request $request)

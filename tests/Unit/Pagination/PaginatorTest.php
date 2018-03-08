@@ -8,7 +8,6 @@ use Rexlabs\Laravel\Smokescreen\Tests\TestCase;
 
 class PaginatorTest extends TestCase
 {
-
     /**
      * @dataProvider currentPageProvider
      */
@@ -20,8 +19,8 @@ class PaginatorTest extends TestCase
     public function currentPageProvider()
     {
         return [
-            [ $this->createPaginator(), 1 ],
-            [ $this->createPaginator(30, 15, 2), 2 ],
+            [$this->createPaginator(), 1],
+            [$this->createPaginator(30, 15, 2), 2],
         ];
     }
 
@@ -36,10 +35,10 @@ class PaginatorTest extends TestCase
     public function lastPageProvider()
     {
         return [
-            [ $this->createPaginator(80, 10), 8 ],
-            [ $this->createPaginator(80, 20), 4 ],
-            [ $this->createPaginator(100, 30), 4 ],
-            [ $this->createPaginator(0, 30), 1 ],
+            [$this->createPaginator(80, 10), 8],
+            [$this->createPaginator(80, 20), 4],
+            [$this->createPaginator(100, 30), 4],
+            [$this->createPaginator(0, 30), 1],
         ];
     }
 
@@ -54,10 +53,10 @@ class PaginatorTest extends TestCase
     public function countProvider()
     {
         return [
-            [ $this->createPaginator(100), 100 ],
-            [ $this->createPaginator(99, 20), 99 ],
-            [ $this->createPaginator(30, 30), 30 ],
-            [ $this->createPaginator(0, 30), 0 ],
+            [$this->createPaginator(100), 100],
+            [$this->createPaginator(99, 20), 99],
+            [$this->createPaginator(30, 30), 30],
+            [$this->createPaginator(0, 30), 0],
         ];
     }
 
@@ -72,10 +71,10 @@ class PaginatorTest extends TestCase
     public function perPageProvider()
     {
         return [
-            [ $this->createPaginator(100, 20), 20 ],
-            [ $this->createPaginator(0, 100), 100 ],
-            [ $this->createPaginator(0, 1), 1 ],
-            [ $this->createPaginator(20, 15), 15 ],
+            [$this->createPaginator(100, 20), 20],
+            [$this->createPaginator(0, 100), 100],
+            [$this->createPaginator(0, 1), 1],
+            [$this->createPaginator(20, 15), 15],
         ];
     }
 
@@ -90,9 +89,9 @@ class PaginatorTest extends TestCase
     public function totalProvider()
     {
         return [
-            [ $this->createPaginator(100), 100 ],
-            [ $this->createPaginator(50), 50 ],
-            [ $this->createPaginator(0), 0 ],
+            [$this->createPaginator(100), 100],
+            [$this->createPaginator(50), 50],
+            [$this->createPaginator(0), 0],
         ];
     }
 
@@ -111,7 +110,6 @@ class PaginatorTest extends TestCase
             $this->createPaginator()->getPaginator()
         );
     }
-
 
     protected function createPaginator(int $numItems = 50, int $perPage = 15, $currentPage = null): Paginator
     {
