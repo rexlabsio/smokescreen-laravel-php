@@ -1,5 +1,9 @@
 # Laravel Smokescreen
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/rexlabsio/smokescreen-laravel-php.svg?branch=master)](https://travis-ci.org/rexlabsio/smokescreen-laravel-php)
+[![Code Coverage](https://scrutinizer-ci.com/g/rexlabsio/smokescreen-laravel-php/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/rexlabsio/smokescreen-laravel-php/?branch=master)
+[![Packagist](https://img.shields.io/packagist/v/rexlabs/laravel-smokescreen.svg)](https://packagist.org/packages/rexlabs/laravel-smokescreen)
 
 
 ## Overview
@@ -280,3 +284,14 @@ class PostTransformer extends AbstractTransformer
 - `when()` is a simple helper method which accepts a condition and returns 
 either the given value when true, or null (by default) when false.  In the above example
 the `"user"` node will be `null` if there is no `user_id` set on the `$post` object.
+
+## Contributing
+
+Pull-requests are welcome. Please ensure code is PSR compliant.
+[Github Repository](http://github.com/rexlabsio/smokescreen-laravel-php)
+
+## About
+
+- Author: [Jodie Dunlop](https://github.com/jodiedunlop)
+- License: [MIT](LICENSE)
+- Copyright (c) 2018 Rex Software Pty Ltd
