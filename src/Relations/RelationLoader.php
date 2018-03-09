@@ -2,7 +2,6 @@
 
 namespace Rexlabs\Laravel\Smokescreen\Relations;
 
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Rexlabs\Smokescreen\Relations\RelationLoaderInterface;
 use Rexlabs\Smokescreen\Resource\ResourceInterface;
@@ -16,11 +15,11 @@ class RelationLoader implements RelationLoaderInterface
     public function load(ResourceInterface $resource)
     {
         // Eager load relationships on collections
-        $obj = $resource->getData();
-        if ($obj instanceof Collection || $obj instanceof Paginator) {
+        $resourceData = $resource->getData();
+        if ($resourceData instanceof Collection) {
             $keys = $this->getRelationshipKeys($resource);
             if (!empty($keys)) {
-                $obj->load($keys);
+                $resourceData->load($keys);
             }
         }
     }

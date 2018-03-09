@@ -108,13 +108,13 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     {
         switch ($this->determineResourceType($data)) {
             case self::TYPE_ITEM_RESOURCE:
-                $this->item($data, $transformer);
+                $this->item($data, $transformer, $resourceKey);
                 break;
             case self::TYPE_COLLECTION_RESOURCE:
-                $this->collection($data, $transformer);
+                $this->collection($data, $transformer, $resourceKey);
                 break;
             default:
-                $this->item($data, $transformer);
+                $this->item($data, $transformer, $resourceKey);
                 break;
         }
 
@@ -377,7 +377,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             $this->smokescreen->parseIncludes($this->includes);
         } elseif ($this->autoParseIncludes) {
             // If autoParseIncludes is not false, then try to parse from the request object.
-            $this->smokescreen->parseIncludes($this->request()->input($this->getIncludeKey()));
+            $this->smokescreen->parseIncludes((string) $this->request()->input($this->getIncludeKey()));
         } else {
             // Empty includes
             $this->smokescreen->parseIncludes('');
