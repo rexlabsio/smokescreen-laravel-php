@@ -2,7 +2,6 @@
 
 namespace Rexlabs\Laravel\Smokescreen\Relations;
 
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Rexlabs\Smokescreen\Relations\RelationLoaderInterface;
 use Rexlabs\Smokescreen\Resource\ResourceInterface;

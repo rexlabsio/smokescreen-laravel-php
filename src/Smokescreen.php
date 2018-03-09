@@ -377,7 +377,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             $this->smokescreen->parseIncludes($this->includes);
         } elseif ($this->autoParseIncludes) {
             // If autoParseIncludes is not false, then try to parse from the request object.
-            $this->smokescreen->parseIncludes((string)$this->request()->input($this->getIncludeKey()));
+            $this->smokescreen->parseIncludes((string) $this->request()->input($this->getIncludeKey()));
         } else {
             // Empty includes
             $this->smokescreen->parseIncludes('');
