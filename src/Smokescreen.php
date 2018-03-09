@@ -98,7 +98,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param mixed|Model|array                  $data
      * @param callable|TransformerInterface|null $transformer
-     * @param null                               $resourceKey
+     * @param string|null                        $resourceKey
      *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      *
@@ -188,7 +188,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param mixed                              $data
      * @param callable|TransformerInterface|null $transformer
-     * @param null                               $resourceKey
+     * @param string|null                        $resourceKey
      *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      *
@@ -206,6 +206,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param mixed                              $data
      * @param callable|TransformerInterface|null $transformer
+     * @param string|null                        $resourceKey
      *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      *
