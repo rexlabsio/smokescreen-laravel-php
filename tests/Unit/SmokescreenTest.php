@@ -434,6 +434,37 @@ class SmokescreenTest extends TestCase
         $this->assertEquals('auto_parse_key', $smokescreen->getIncludeKey());
     }
 
+    public function test_default_serializer_can_be_configured_with_class_name()
+    {
+        $stub = $this->getMockBuilder(Smokescreen::class)
+            ->setMethods(['serializeWith'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $stub->expects($this->once())
+            ->method('serializeWith')
+            ->with($this->equalTo(new DefaultSerializer()));
+        $stub->__construct(
+            new \Rexlabs\Smokescreen\Smokescreen(),
+            ['default_serializer' => DefaultSerializer::class]
+        );
+    }
+
+    public function test_default_serializer_can_be_configured_with_object()
+    {
+        $obj = new class extends DefaultSerializer {};
+        $stub = $this->getMockBuilder(Smokescreen::class)
+            ->setMethods(['serializeWith'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $stub->expects($this->once())
+            ->method('serializeWith')
+            ->with($this->equalTo($obj));
+        $stub->__construct(
+            new \Rexlabs\Smokescreen\Smokescreen(),
+            ['default_serializer' => $obj]
+        );
+    }
+
     public function test_can_set_request_manually()
     {
         $request = request();

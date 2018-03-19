@@ -76,7 +76,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     public function __construct(\Rexlabs\Smokescreen\Smokescreen $smokescreen, array $config = [])
     {
         $this->smokescreen = $smokescreen;
-        $this->config = $config;
+        $this->setConfig($config);
     }
 
     /**
@@ -262,8 +262,6 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @param SerializerInterface|null $serializer
      *
-     * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
-     *
      * @return $this|\Illuminate\Contracts\Support\Responsable
      */
     public function serializeWith($serializer)
@@ -369,7 +367,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
         // Serializer may be overridden via config
         // We may be setting the serializer to null, in which case a default will be provided.
-        $serializer = $this->serializer ?? $this->config['default_serializer'] ?? null;
+        $serializer = $this->serializer ?? null;
         $this->smokescreen->setSerializer($serializer);
 
         // Assign any includes.
@@ -420,7 +418,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         // If no model can be determined from the data
         if ($model === null) {
             // Don't assign any transformer for this data
-            return;
+            return null;
         }
 
         // Cool, now let's try to find a matching transformer based on our Model class
@@ -646,5 +644,24 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     public function getBaseSmokescreen(): \Rexlabs\Smokescreen\Smokescreen
     {
         return $this->smokescreen;
+    }
+
+    /**
+     * @param array $config
+     */
+    protected function setConfig(array $config)
+    {
+        if (!empty($config['default_serializer'])) {
+            $serializer = $config['default_serializer'];
+            if (\is_string($serializer)) {
+                // Given serializer is expected to be a class path
+                // Instantiate via the container
+                $serializer = app()->make($serializer);
+            }
+            $this->serializeWith($serializer);
+            unset($config['default_serializer']);
+        }
+
+        $this->config = $config;
     }
 }
