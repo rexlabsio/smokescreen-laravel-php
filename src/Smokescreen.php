@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
-use Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException;
 use Rexlabs\Laravel\Smokescreen\Pagination\Paginator as PaginatorBridge;
 use Rexlabs\Laravel\Smokescreen\Relations\RelationLoader;
 use Rexlabs\Laravel\Smokescreen\Resources\CollectionResource;
@@ -394,10 +393,11 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
         // Provide a custom transformer resolver which can interrogate the
         // underlying model and attempt to resolve a transformer class.
-        $this->smokescreen->setTransformerResolver(
-            $this->transformerResolver ??
-            new TransformerResolver($this->config['transformer_namespace'] ?? null)
-        );
+        if ($this->smokescreen->getTransformerResolver() === null) {
+            $this->smokescreen->setTransformerResolver(
+                new TransformerResolver($this->config['transformer_namespace'] ?? 'App\\Transformers')
+            );
+        }
 
         // We will provide the Laravel relationship loader if none has already
         // been explicitly defined.

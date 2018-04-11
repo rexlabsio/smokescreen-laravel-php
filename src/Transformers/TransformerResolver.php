@@ -30,9 +30,12 @@ class TransformerResolver implements TransformerResolverInterface
     {
         $transformer = null;
 
+        dump('RESOLVE TIME for '.get_class($resource));
+
         // Find the underlying model of the resource data
         $model = null;
         $data = $resource->getData();
+        dump(get_class($data));
         if ($data instanceof Model) {
             $model = $data;
         } elseif ($data instanceof Collection) {
@@ -47,7 +50,7 @@ class TransformerResolver implements TransformerResolverInterface
                 $transformerClass = sprintf('%s\\%sTransformer',
                     $this->namespace ?? 'App\\Transformers',
                     (new \ReflectionClass($model))->getShortName());
-                $transformer = app()->make($transformerClass);
+                $transformer = resolve($transformerClass);
             } catch (\Exception $e) {
                 throw new UnresolvedTransformerException('Unable to resolve transformer for model: ' . \get_class($model),
                     0, $e);
