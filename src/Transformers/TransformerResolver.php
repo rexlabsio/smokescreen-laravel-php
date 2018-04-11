@@ -13,7 +13,12 @@ class TransformerResolver implements TransformerResolverInterface
     /** @var string|null */
     protected $namespace;
 
-    public function __construct($namespace = null)
+    /**
+     * TransformerResolver constructor.
+     *
+     * @param string $namespace
+     */
+    public function __construct(string $namespace)
     {
         $this->namespace = $namespace;
     }
@@ -30,12 +35,9 @@ class TransformerResolver implements TransformerResolverInterface
     {
         $transformer = null;
 
-        dump('RESOLVE TIME for '.get_class($resource));
-
         // Find the underlying model of the resource data
         $model = null;
         $data = $resource->getData();
-        dump(get_class($data));
         if ($data instanceof Model) {
             $model = $data;
         } elseif ($data instanceof Collection) {
@@ -48,7 +50,7 @@ class TransformerResolver implements TransformerResolverInterface
             // We use our configuration value 'transformer_namespace' to determine where to look.
             try {
                 $transformerClass = sprintf('%s\\%sTransformer',
-                    $this->namespace ?? 'App\\Transformers',
+                    $this->namespace,
                     (new \ReflectionClass($model))->getShortName());
                 $transformer = resolve($transformerClass);
             } catch (\Exception $e) {
