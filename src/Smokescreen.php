@@ -294,7 +294,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @return $this
      */
-    public function setTransformerResolver(TransformerResolverInterface $transformerResolver)
+    public function resolveTransformerVia(TransformerResolverInterface $transformerResolver)
     {
         $this->smokescreen->setTransformerResolver($transformerResolver);
 
