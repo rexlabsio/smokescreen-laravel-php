@@ -67,6 +67,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /** @var array */
     protected $config;
 
+    /** @var array */
+    protected $injections;
+
     /**
      * Smokescreen constructor.
      *
@@ -330,10 +333,26 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @return array
      *
      * @see Smokescreen::toArray()
+     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      */
     public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    /**
+     * Inject some data into the payload under given key (supports dot-notation).
+     * This method can be called multiple times.
+     * @param string $key
+     * @param mixed $data
+     *
+     * @return $this
+     */
+    public function inject($key, $data)
+    {
+        $this->injections[$key] = $data;
+
+        return $this;
     }
 
     /**
@@ -346,6 +365,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
      *
      * @return array
+     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      */
     public function toArray(): array
     {
@@ -389,7 +409,14 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         }
 
         // Kick off the transformation via the Smokescreen base library.
-        return $this->smokescreen->toArray();
+        $data = $this->smokescreen->toArray();
+        if (!empty($this->injections)) {
+            foreach ($this->injections as $key => $inject) {
+                Arr::set($data, $key, $inject);
+            }
+        }
+
+        return $data;
     }
 
     /**
