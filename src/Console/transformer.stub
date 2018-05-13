@@ -1,0 +1,46 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyModel;
+use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
+
+/**
+ * The DummyModelName transformer.
+ *
+ */
+class DummyClass extends AbstractTransformer
+{
+    /**
+     * The list of available includes.
+     *
+     * @var array
+     */
+    protected $includes = [
+        //
+    ];
+
+    /**
+     * The default properties to return.
+     *
+     * If empty, all the properties from transform() are returned.
+     *
+     * @var array
+     */
+    protected $defaultProps = [
+        //
+    ];
+
+    /**
+     * Retrieve the transformed model.
+     *
+     * @param DummyModelName $dummyModelName
+     * @return array
+     */
+    public function transform(DummyModelName $dummyModelName) : array
+    {
+        return [
+            //
+        ];
+    }
+}
