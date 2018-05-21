@@ -68,6 +68,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /** @var array */
     protected $config;
 
+    /** @var array */
+    protected $injections;
+
     /**
      * Smokescreen constructor.
      *
@@ -341,6 +344,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      *
      * @return array
      *
@@ -352,6 +356,22 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
+     * Inject some data into the payload under given key (supports dot-notation).
+     * This method can be called multiple times.
+     *
+     * @param string $key
+     * @param mixed  $data
+     *
+     * @return $this
+     */
+    public function inject($key, $data)
+    {
+        $this->injections[$key] = $data;
+
+        return $this;
+    }
+
+    /**
      * Output the transformed and serialized data as an array.
      * This kicks off the transformation via the base Smokescreen object.
      *
@@ -359,6 +379,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      *
      * @return array
      */
@@ -406,7 +427,14 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         }
 
         // Kick off the transformation via the Smokescreen base library.
-        return $this->smokescreen->toArray();
+        $data = $this->smokescreen->toArray();
+        if (!empty($this->injections)) {
+            foreach ($this->injections as $key => $inject) {
+                Arr::set($data, $key, $inject);
+            }
+        }
+
+        return $data;
     }
 
     /**

@@ -700,4 +700,54 @@ class SmokescreenTest extends TestCase
                 ]
             );
     }
+
+    public function test_can_inject_data_into_payload()
+    {
+        $data = [
+            [
+                'id'    => 1,
+                'title' => 'Example post 1',
+                'body'  => 'An example post',
+            ],
+            [
+                'id'    => 2,
+                'title' => 'Example post 2',
+                'body'  => 'Another example post',
+            ],
+        ];
+
+        $smokescreen = Smokescreen::make()
+            ->transform($data, $this->createTransformer())
+            // Add a a pagination array nested under meta
+            ->inject('meta.pagination', [
+                'next' => 'test1',
+                'prev' => 'test2',
+            ])
+            // Insert a property into the first element in the collection
+            ->inject('data.0.new_property', 'val');
+
+        $this->assertEquals([
+                'data' => [
+                    [
+                        'id'           => 1,
+                        'title'        => 'Example post 1',
+                        'body'         => 'An example post',
+                        'new_property' => 'val',
+                    ],
+                    [
+                        'id'    => 2,
+                        'title' => 'Example post 2',
+                        'body'  => 'Another example post',
+                    ],
+                ],
+                'meta' => [
+                    'pagination' => [
+                        'next' => 'test1',
+                        'prev' => 'test2',
+                    ],
+                ],
+            ],
+            $smokescreen->toArray()
+        );
+    }
 }
