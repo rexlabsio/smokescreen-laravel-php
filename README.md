@@ -174,6 +174,21 @@ $smokescreen->loadRelationsVia(new MyRelationsLoader);
 - We provide `RelationsLoader` as the default which eager-loads relationships for collection resources.
 - Your custom loader should implement the `RelationsLoaderInterface` interface and provide a `load()` method.
 
+### resolveTransformerVia(): Override the default transformer resolver
+
+`$smokescreen->loadTransformersVia(TransformerResolverInterface $loader);`
+
+```php
+<?php
+$smokescreen->loadTransformersVia(new MyTransformerResolver);
+```
+
+- The resolver is used when a transformer is not explicitly defined on a resource.
+- The default resolver in this package tries to find a matching transformer class within the path defined in `smokescreen.transformer_namespace` path, and instantiates it via the app container.
+- You only need to set this if you plan to use a different resolver than the default.
+- Your custom resolver should implement the `TransformersLoaderInterface` interface and provide a `resolve(ResourceInterface)` method.
+
+
 ### response(): Access the generated response object
 
 `$response = $smokescreen->response(int $statusCode = 200, array $headers = [], int $options = 0);`

@@ -17,11 +17,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
-use Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException;
 use Rexlabs\Laravel\Smokescreen\Pagination\Paginator as PaginatorBridge;
 use Rexlabs\Laravel\Smokescreen\Relations\RelationLoader;
 use Rexlabs\Laravel\Smokescreen\Resources\CollectionResource;
 use Rexlabs\Laravel\Smokescreen\Resources\ItemResource;
+use Rexlabs\Laravel\Smokescreen\Transformers\TransformerResolver;
 use Rexlabs\Smokescreen\Exception\MissingResourceException;
 use Rexlabs\Smokescreen\Helpers\JsonHelper;
 use Rexlabs\Smokescreen\Relations\RelationLoaderInterface;
@@ -29,6 +29,7 @@ use Rexlabs\Smokescreen\Resource\Item;
 use Rexlabs\Smokescreen\Resource\ResourceInterface;
 use Rexlabs\Smokescreen\Serializer\SerializerInterface;
 use Rexlabs\Smokescreen\Transformer\TransformerInterface;
+use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
 
 /**
  * Smokescreen for Laravel.
@@ -287,6 +288,20 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
+     * Sets the resolver to be used for locating transformers for resources.
+     *
+     * @param TransformerResolverInterface $transformerResolver
+     *
+     * @return $this
+     */
+    public function resolveTransformerVia(TransformerResolverInterface $transformerResolver)
+    {
+        $this->smokescreen->setTransformerResolver($transformerResolver);
+
+        return $this;
+    }
+
+    /**
      * Returns an object representation of the transformed/serialized data.
      *
      * @throws \Rexlabs\Smokescreen\Exception\JsonEncodeException
@@ -354,19 +369,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             throw new MissingResourceException('Resource is not defined');
         }
 
-        // If there is no transformer assigned to the resource, we'll try find one.
-        if (!$this->resource->hasTransformer()) {
-            // Try to resolve one based on the underlying model (if any).
-
-            $transformer = $this->resolveTransformerForResource($this->resource);
-            $this->resource->setTransformer($transformer);
-        }
-
         // Assign the resource in the base instance.
         $this->smokescreen->setResource($this->resource);
 
-        // Serializer may be overridden via config
-        // We may be setting the serializer to null, in which case a default will be provided.
+        // Serializer may be overridden via config.
+        // We may be setting the serializer to null, in which case a default
+        // will be provided.
         $serializer = $this->serializer ?? null;
         $this->smokescreen->setSerializer($serializer);
 
@@ -375,11 +383,20 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             // Includes have been set explicitly.
             $this->smokescreen->parseIncludes($this->includes);
         } elseif ($this->autoParseIncludes) {
-            // If autoParseIncludes is not false, then try to parse from the request object.
+            // If autoParseIncludes is not false, then try to parse from the
+            // request object.
             $this->smokescreen->parseIncludes((string) $this->request()->input($this->getIncludeKey()));
         } else {
             // Empty includes
             $this->smokescreen->parseIncludes('');
+        }
+
+        // Provide a custom transformer resolver which can interrogate the
+        // underlying model and attempt to resolve a transformer class.
+        if ($this->smokescreen->getTransformerResolver() === null) {
+            $this->smokescreen->setTransformerResolver(
+                new TransformerResolver($this->config['transformer_namespace'] ?? 'App\\Transformers')
+            );
         }
 
         // We will provide the Laravel relationship loader if none has already
@@ -390,49 +407,6 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
         // Kick off the transformation via the Smokescreen base library.
         return $this->smokescreen->toArray();
-    }
-
-    /**
-     * Determines the Transformer object to be used for a particular resource.
-     * Inspects the underlying Eloquent model to determine an appropriately
-     * named transformer class, and instantiate the object.
-     *
-     * @param ResourceInterface $resource
-     *
-     * @throws UnresolvedTransformerException
-     *
-     * @return TransformerInterface|callable|null
-     */
-    protected function resolveTransformerForResource(ResourceInterface $resource)
-    {
-        $data = $resource->getData();
-
-        // Find the underlying model of the resource data
-        $model = null;
-        if ($data instanceof Model) {
-            $model = $data;
-        } elseif ($data instanceof Collection) {
-            $model = $data->first();
-        }
-
-        // If no model can be determined from the data
-        if ($model === null) {
-            // Don't assign any transformer for this data
-            return null;
-        }
-
-        // Cool, now let's try to find a matching transformer based on our Model class
-        // We use our configuration value 'transformer_namespace' to determine where to look.
-        try {
-            $transformerClass = sprintf('%s\\%sTransformer',
-                $this->config['transformer_namespace'] ?? 'App\\Transformers',
-                (new \ReflectionClass($model))->getShortName());
-            $transformer = app()->make($transformerClass);
-        } catch (\Exception $e) {
-            throw new UnresolvedTransformerException('Unable to resolve transformer for model: '.\get_class($model), 0, $e);
-        }
-
-        return $transformer;
     }
 
     /**

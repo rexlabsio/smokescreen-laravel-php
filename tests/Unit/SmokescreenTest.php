@@ -26,6 +26,7 @@ use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
 use Rexlabs\Smokescreen\Exception\MissingResourceException;
 use Rexlabs\Smokescreen\Serializer\DefaultSerializer;
 use Rexlabs\Smokescreen\Transformer\TransformerInterface;
+use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
 
 class SmokescreenTest extends TestCase
 {
@@ -451,7 +452,8 @@ class SmokescreenTest extends TestCase
 
     public function test_default_serializer_can_be_configured_with_object()
     {
-        $obj = new class extends DefaultSerializer {};
+        $obj = new class() extends DefaultSerializer {
+        };
         $stub = $this->getMockBuilder(Smokescreen::class)
             ->setMethods(['serializeWith'])
             ->disableOriginalConstructor()
@@ -547,6 +549,28 @@ class SmokescreenTest extends TestCase
         );
         $this->assertEquals('Another Value', $response->headers->get('X-Some-Header'));
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function test_can_override_the_transformer_resolver()
+    {
+        $this->createSchemas();
+        $this->createModels();
+
+        // Mock a resolver, and test that the resolve() method is called.
+        $stub = $this->getMockBuilder(TransformerResolverInterface::class)
+            ->getMock();
+        $stub->expects($this->once())
+            ->method('resolve');
+
+        $smokescreen = Smokescreen::make(
+            null, [
+                'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
+            ]
+        );
+        $smokescreen
+            ->resolveTransformerVia($stub)
+            ->transform(User::first())
+            ->toArray();
     }
 
     protected function createQueryBuilder(): \Illuminate\Database\Query\Builder
