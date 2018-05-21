@@ -28,7 +28,8 @@ class TransformerResolver implements TransformerResolverInterface
      * Inspects the underlying Eloquent model to determine an appropriately
      * named transformer class, and instantiate the object.
      *
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      */
     public function resolve(ResourceInterface $resource)
@@ -54,7 +55,7 @@ class TransformerResolver implements TransformerResolverInterface
                     (new \ReflectionClass($model))->getShortName());
                 $transformer = resolve($transformerClass);
             } catch (\Exception $e) {
-                throw new UnresolvedTransformerException('Unable to resolve transformer for model: ' . \get_class($model),
+                throw new UnresolvedTransformerException('Unable to resolve transformer for model: '.\get_class($model),
                     0, $e);
             }
         }

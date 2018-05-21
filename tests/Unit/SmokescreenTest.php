@@ -452,7 +452,8 @@ class SmokescreenTest extends TestCase
 
     public function test_default_serializer_can_be_configured_with_object()
     {
-        $obj = new class extends DefaultSerializer {};
+        $obj = new class() extends DefaultSerializer {
+        };
         $stub = $this->getMockBuilder(Smokescreen::class)
             ->setMethods(['serializeWith'])
             ->disableOriginalConstructor()
@@ -550,7 +551,6 @@ class SmokescreenTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-
     public function test_can_override_the_transformer_resolver()
     {
         $this->createSchemas();
@@ -571,7 +571,6 @@ class SmokescreenTest extends TestCase
             ->resolveTransformerVia($stub)
             ->transform(User::first())
             ->toArray();
-
     }
 
     protected function createQueryBuilder(): \Illuminate\Database\Query\Builder
@@ -701,5 +700,4 @@ class SmokescreenTest extends TestCase
                 ]
             );
     }
-
 }
