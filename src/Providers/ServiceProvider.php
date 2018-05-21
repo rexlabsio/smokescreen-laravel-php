@@ -16,8 +16,14 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../../config/smokescreen.php' => config_path('smokescreen.php'),
+            __DIR__ . '/../../config/smokescreen.php' => config_path('smokescreen.php'),
         ], 'config');
+
+        $this->publishes([
+            __DIR__ . '/../../stubs' => resource_path('views/vendor/smokescreen'),
+        ], 'stub');
+
+        $this->loadViewsFrom(__DIR__ . '/../../stubs', 'smokescreen');
 
         $this->commands(MakeTransformerCommand::class);
     }

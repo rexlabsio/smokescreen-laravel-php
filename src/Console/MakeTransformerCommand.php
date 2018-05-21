@@ -3,6 +3,9 @@
 namespace Rexlabs\Laravel\Smokescreen\Console;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 class MakeTransformerCommand extends GeneratorCommand
 {
@@ -28,13 +31,55 @@ class MakeTransformerCommand extends GeneratorCommand
     protected $type = 'Transformer';
 
     /**
+     * The view factory.
+     *
+     * @var \Illuminate\Contracts\View\Factory
+     */
+    protected $factory;
+
+    /**
+     * The includes listing.
+     *
+     * @var \Rexlabs\Laravel\Smokescreen\Console\IncludesListing
+     */
+    protected $includesListing;
+
+    /**
+     * The properties listing.
+     *
+     * @var \Rexlabs\Laravel\Smokescreen\Console\PropertiesListing
+     */
+    protected $propertiesListing;
+
+    /**
+     * Set the dependencies.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem $files
+     * @param  \Illuminate\Contracts\View\Factory $factory
+     * @param  \Rexlabs\Laravel\Smokescreen\Console\IncludesListing $includesListing
+     * @param  \Rexlabs\Laravel\Smokescreen\Console\PropertiesListing $propertiesListing
+     */
+    public function __construct(
+        Filesystem $files,
+        Factory $factory,
+        IncludesListing $includesListing,
+        PropertiesListing $propertiesListing
+    ) {
+        parent::__construct($files);
+
+        $this->factory = $factory;
+        $this->includesListing = $includesListing;
+        $this->propertiesListing = $propertiesListing;
+    }
+
+    /**
      * Get the stub file for the generator.
      *
      * @return string
      */
     protected function getStub()
     {
-        return __DIR__ . '/transformer.stub';
+        return 'smokescreen::transformer';
     }
 
     /**
@@ -44,17 +89,20 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     public function handle()
     {
-        if (!class_exists($name = $this->argument('model'))) {
-            $confirmed = $this->confirm(
-                'The model to transform does not exist, do you want to generate it?'
-            );
-
-            if ($confirmed) {
-                $this->call('make:model', compact('name'));
-            }
-        }
+        $this->alertIfModelIsMissing();
 
         parent::handle();
+    }
+
+    /**
+     * Display an error if the specified model does not exist.
+     *
+     */
+    protected function alertIfModelIsMissing()
+    {
+        if (!class_exists($name = $this->argument('model'))) {
+            exit($this->error("The model [$name] does not exist, please create it first."));
+        }
     }
 
     /**
@@ -76,32 +124,17 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function buildClass($name)
     {
-        $stub = parent::buildClass($name);
+        $model = $this->argument('model');
 
-        return $this->replaceModel($stub);
-    }
-
-    /**
-     * Retrieve the given content replacing the model in it.
-     *
-     * @param string $content
-     * @return string
-     */
-    protected function replaceModel(string $content) : string
-    {
-        $from = [
-            'DummyModelName',
-            'dummyModelName',
-            'DummyModel',
+        $data = [
+            'namespace' => $this->getNamespace($name),
+            'modelName' => $this->getModelName(),
+            'transformerName' => $this->getNameInput(),
+            'includes' => $this->includesListing->listForEloquent($model),
+            'properties' => $this->propertiesListing->listForEloquent($model),
         ];
 
-        $to = [
-            $this->getModelName(),
-            lcfirst($this->getModelName()),
-            $this->argument('model'),
-        ];
-
-        return str_replace($from, $to, $content);
+        return $this->factory->make($this->getStub(), $data)->render();
     }
 
     /**
