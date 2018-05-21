@@ -329,11 +329,11 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      *
      * @return array
      *
      * @see Smokescreen::toArray()
-     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      */
     public function jsonSerialize(): array
     {
@@ -343,8 +343,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Inject some data into the payload under given key (supports dot-notation).
      * This method can be called multiple times.
+     *
      * @param string $key
-     * @param mixed $data
+     * @param mixed  $data
      *
      * @return $this
      */
@@ -363,9 +364,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * @throws \Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      * @throws \Rexlabs\Smokescreen\Exception\MissingResourceException
+     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      *
      * @return array
-     * @throws \Rexlabs\Smokescreen\Exception\IncludeException
      */
     public function toArray(): array
     {
@@ -445,7 +446,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         // If no model can be determined from the data
         if ($model === null) {
             // Don't assign any transformer for this data
-            return null;
+            return;
         }
 
         // Cool, now let's try to find a matching transformer based on our Model class

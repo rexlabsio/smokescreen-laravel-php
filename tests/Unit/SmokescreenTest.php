@@ -451,7 +451,8 @@ class SmokescreenTest extends TestCase
 
     public function test_default_serializer_can_be_configured_with_object()
     {
-        $obj = new class extends DefaultSerializer {};
+        $obj = new class() extends DefaultSerializer {
+        };
         $stub = $this->getMockBuilder(Smokescreen::class)
             ->setMethods(['serializeWith'])
             ->disableOriginalConstructor()
@@ -705,9 +706,9 @@ class SmokescreenTest extends TestCase
         $this->assertEquals([
                 'data' => [
                     [
-                        'id'    => 1,
-                        'title' => 'Example post 1',
-                        'body'  => 'An example post',
+                        'id'           => 1,
+                        'title'        => 'Example post 1',
+                        'body'         => 'An example post',
                         'new_property' => 'val',
                     ],
                     [
@@ -720,8 +721,8 @@ class SmokescreenTest extends TestCase
                     'pagination' => [
                         'next' => 'test1',
                         'prev' => 'test2',
-                    ]
-                ]
+                    ],
+                ],
             ],
             $smokescreen->toArray()
         );
