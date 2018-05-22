@@ -47,7 +47,7 @@ controller's constructor or methods.
 ## Requirements
 
 - PHP >= 7.0
-- Laravel >= 5.4
+- Laravel >= 5.5
 
 ## Installation
 
@@ -58,14 +58,7 @@ Install package
 
 `composer require rexlabs/laravel-smokescreen`
 
-For Laravel 5.5:
-
 This package will be auto-discovered, and no additional configuration is necessary.
-
-For Laravel 5.4 and below:
-
-Add `\Rexlabs\Laravel\Smokescreen\ServiceProvider::class` to the providers array in `config/app.php`
-If you would like to use the provided facade, you can add `\Rexlabs\Laravel\Smokescreen\Facades\Smokescreen::class` to the aliases array in `config/app.php`
 
 ## Configuration
 
