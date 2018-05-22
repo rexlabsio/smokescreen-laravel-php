@@ -1,13 +1,11 @@
-@php
-echo "<?php\n";
-@endphp
+<\?php
 
-namespace {{ $namespace }};
+namespace {{ $transformerNamespace }};
 
 use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
 
 /**
- * The {{ $modelName }} transformer.
+ * { $modelName }} transformer.
  *
  */
 class {{ $transformerName }} extends AbstractTransformer
@@ -30,19 +28,34 @@ class {{ $transformerName }} extends AbstractTransformer
     ];
 
     /**
+    * Declare the available properties.
+    *
+    * @var array
+    */
+    protected $props = [
+@forelse ($properties as $property => $definition)
+    @if ($definition)
+        '{{ $property }}' => '{{ $definition }}',
+    @else
+        '{{ $property }}',
+    @endif
+@empty
+        //
+@endforelse
+    ];
+
+    /**
      * The default properties to return.
+     * When empty, all the declared properties will be returned.
      *
      * @var array
      */
     protected $defaultProps = [
-@forelse ($properties as $property => $definition)
-@if ($definition)
-        '{{ $property }}' => '{{ $definition }}',
-@else
+@forelse ($defaultProperties as $property)
         '{{ $property }}',
-@endif
 @empty
         //
 @endforelse
+];
     ];
 }
