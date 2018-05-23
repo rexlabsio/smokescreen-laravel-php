@@ -32,11 +32,11 @@ class ModelMapper
     ];
 
     /**
-     * The map of property types.
+     * Maps schema field types to smokescreen property types.
      *
      * @var array
      */
-    protected $typesMap = [
+    protected $schemaTypesMap = [
         'guid'     => 'string',
         'boolean'  => 'boolean',
         'datetime' => 'datetime',
@@ -92,7 +92,7 @@ class ModelMapper
         $table = $this->getModel()->getTable();
         foreach (Schema::getColumnListing($table) as $column) {
             $type = Schema::getColumnType($table, $column);
-            $props[$column] = $this->typesMap[$type] ?? null;
+            $props[$column] = $this->schemaTypesMap[$type] ?? null;
         }
 
         return $props;
@@ -186,10 +186,9 @@ class ModelMapper
     protected function getResourceTypeByReturnAnnotation(ReflectionMethod $method)
     {
         if (preg_match('/@return\s+(\S+)/', $method->getDocComment(), $match)) {
-            list($returnStmt, $returnTypes) = $match;
+            list($statement, $returnTypes) = $match;
 
-            // Build a regex suitable for matching our relationship keys
-            // EG. hasOne|hasMany...
+            // Build a regex suitable for matching our relationship keys. EG. hasOne|hasMany...
             $keyPattern = implode('|', array_map(function ($key) {
                     return preg_quote($key, '/');
                 }, array_keys($this->relationsMap)));
@@ -217,11 +216,13 @@ class ModelMapper
         $startLine = $method->getStartLine();
         $numLines = $method->getEndLine() - $startLine;
         $body = implode('', \array_slice(file($method->getFileName()), $startLine, $numLines));
-
-        foreach (array_keys($this->relationsMap) as $returnType) {
-            // Find "->hasMany(" etc.
-            if (preg_match('/->'.preg_quote($returnType, '/').'\(/i', $body)) {
-                return $this->relationsMap[ $returnType ];
+        if (preg_match('/^\s*return\s+(.+?);/ms', $body, $match)) {
+            $returnStmt = $match[1];
+            foreach (array_keys($this->relationsMap) as $returnType) {
+                // Find "->hasMany(" etc.
+                if (preg_match('/->' . preg_quote($returnType, '/') . '\(/i', $returnStmt)) {
+                    return $this->relationsMap[$returnType];
+                }
             }
         }
 
