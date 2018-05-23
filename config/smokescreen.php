@@ -5,6 +5,9 @@ return [
     // they are not explicitly provided.
     'transformer_namespace' => 'App\Transformers',
 
+
+    'transformer_name' => '{ModelName}Transformer',
+
     // Override the default serializer to be used.
     // If not specified - the Smokescreen DefaultSerializer will be used.
     'default_serializer' => null,

@@ -10,17 +10,22 @@ use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
 
 class TransformerResolver implements TransformerResolverInterface
 {
-    /** @var string|null */
+    /** @var string */
     protected $namespace;
+
+    /** @var string */
+    protected $nameTemplate;
 
     /**
      * TransformerResolver constructor.
      *
      * @param string $namespace
+     * @param string $nameTemplate
      */
-    public function __construct(string $namespace)
+    public function __construct(string $namespace, string $nameTemplate)
     {
         $this->namespace = $namespace;
+        $this->nameTemplate = $nameTemplate;
     }
 
     /**
@@ -45,17 +50,15 @@ class TransformerResolver implements TransformerResolverInterface
             $model = $data->first();
         }
 
-        // If no model can be determined from the data
         if ($model !== null) {
             // Cool, now let's try to find a matching transformer based on our Model class
             // We use our configuration value 'transformer_namespace' to determine where to look.
             try {
-                $transformerClass = sprintf('%s\\%sTransformer',
-                    $this->namespace,
-                    (new \ReflectionClass($model))->getShortName());
-                $transformer = resolve($transformerClass);
+                $modelName = (new \ReflectionClass($model))->getShortName();
+                $transformerName = preg_replace('/{ModelName}/i', $modelName, $this->nameTemplate);
+                $transformer = resolve(sprintf('%s\\%s', $this->namespace, $transformerName));
             } catch (\Exception $e) {
-                throw new UnresolvedTransformerException('Unable to resolve transformer for model: '.\get_class($model),
+                throw new UnresolvedTransformerException('Unable to resolve transformer for model: ' . \get_class($model),
                     0, $e);
             }
         }

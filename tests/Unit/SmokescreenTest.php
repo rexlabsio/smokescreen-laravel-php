@@ -8,17 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Query\Processors\PostgresProcessor;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 use Rexlabs\Laravel\Smokescreen\Exceptions\UnresolvedTransformerException;
 use Rexlabs\Laravel\Smokescreen\Relations\RelationLoader;
 use Rexlabs\Laravel\Smokescreen\Resources\CollectionResource;
 use Rexlabs\Laravel\Smokescreen\Resources\ItemResource;
 use Rexlabs\Laravel\Smokescreen\Smokescreen;
+use Rexlabs\Laravel\Smokescreen\Tests\UsesModelStubs;
 use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\Post;
 use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\User;
 use Rexlabs\Laravel\Smokescreen\Tests\TestCase;
@@ -30,6 +28,8 @@ use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
 
 class SmokescreenTest extends TestCase
 {
+    use UsesModelStubs;
+
     public function test_can_get_base_smokescreen_instance()
     {
         $smokescreen = Smokescreen::make();
@@ -629,76 +629,6 @@ class SmokescreenTest extends TestCase
                 return ['custom_serialize' => $data];
             }
         };
-    }
-
-    protected function createSchemas()
-    {
-        Schema::create(
-            'users', function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name');
-                $table->string('email')
-                ->unique();
-                $table->string('password');
-                $table->rememberToken();
-                $table->timestamps();
-            }
-        );
-        Schema::create(
-            'posts', function (Blueprint $table) {
-                $table->increments('id');
-                $table->unsignedInteger('user_id');
-                $table->string('title');
-                $table->text('body');
-                $table->timestamps();
-            }
-        );
-        Schema::create(
-            'comments', function (Blueprint $table) {
-                $table->increments('id');
-                $table->unsignedInteger('post_id');
-                $table->unsignedInteger('user_id');
-                $table->string('title');
-                $table->text('comments');
-                $table->timestamps();
-            }
-        );
-    }
-
-    protected function createModels()
-    {
-        /** @var User $user */
-        $user = User::create(
-            [
-                'name'     => 'Some User',
-                'email'    => 'some.user@example.com',
-                'password' => Hash::make('somepassword'),
-            ]
-        );
-        /** @var Post $post */
-        $post = Post::create(
-            [
-                'user_id' => $user->id,
-                'title'   => 'Example post',
-                'body'    => 'Post body',
-            ]
-        );
-        $post->comments()
-            ->create(
-                [
-                    'user_id'  => $user->id,
-                    'title'    => 'First comment',
-                    'comments' => 'FP',
-                ]
-            );
-        $post->comments()
-            ->create(
-                [
-                    'user_id'  => $user->id,
-                    'title'    => 'Another comment',
-                    'comments' => 'That is all',
-                ]
-            );
     }
 
     public function test_can_inject_data_into_payload()

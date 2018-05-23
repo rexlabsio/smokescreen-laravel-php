@@ -122,21 +122,29 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function buildClass($name)
     {
-        $modelInspector = new ModelInspector($this->getModel());
-        $data = [
-            'transformerNamespace' => $this->getTransformerNamespace(),
-            'transformerName'      => $this->getTransformerName(),
+        return $this->viewFactory->make($this->getStub(), $this->getTemplateData())
+            ->render();
+    }
+
+    /**
+     * @return array
+     * @throws \ReflectionException
+     */
+    protected function getTemplateData()
+    {
+        $modelInspector = new ModelMapper($this->getModel());
+        return [
             'model'                => $this->getModel(),
             'modelClass'           => $this->getModelClass(),
             'modelNamespace'       => $this->getModelNamespace(),
             'modelName'            => $this->getModelName(),
+            'transformerClass'     => $this->getTransformerClass(),
+            'transformerNamespace' => $this->getTransformerNamespace(),
+            'transformerName'      => $this->getTransformerName(),
             'includes'             => $modelInspector->getIncludes(),
             'properties'           => $modelInspector->getDeclaredProperties(),
             'defaultProperties'    => $modelInspector->getDefaultProperties(),
         ];
-
-        return $this->viewFactory->make($this->getStub(), $data)
-            ->render();
     }
 
     /**
@@ -154,7 +162,8 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function getTransformerName()
     {
-        return $this->getModelName() . 'Transformer';
+        return preg_replace('/{ModelName}/i', $this->getModelName(),
+            config('smokescreen.transformer_name', '{ModelName}Transformer'));
     }
 
     /**
