@@ -9,7 +9,6 @@ use ReflectionMethod;
 
 /**
  * The includes listing.
- *
  */
 class ModelMapper
 {
@@ -61,8 +60,9 @@ class ModelMapper
     /**
      * List the includes of the given Eloquent model.
      *
-     * @return array
      * @throws \ReflectionException
+     *
+     * @return array
      */
     public function getIncludes(): array
     {
@@ -150,8 +150,6 @@ class ModelMapper
         if ($type = $this->getResourceTypeByMethodBody($method)) {
             return $type;
         }
-
-        return null;
     }
 
     /**
@@ -163,11 +161,11 @@ class ModelMapper
      */
     protected function getResourceTypeByReturnType(ReflectionMethod $method)
     {
-        $returnType = (string)$method->getReturnType();
+        $returnType = (string) $method->getReturnType();
         $namespace = 'Illuminate\Database\Eloquent\Relations';
 
         if (!starts_with($returnType, $namespace)) {
-            return null;
+            return;
         }
 
 //        $relation = lcfirst(class_basename($returnType));
@@ -190,16 +188,14 @@ class ModelMapper
 
             // Build a regex suitable for matching our relationship keys. EG. hasOne|hasMany...
             $keyPattern = implode('|', array_map(function ($key) {
-                    return preg_quote($key, '/');
-                }, array_keys($this->relationsMap)));
+                return preg_quote($key, '/');
+            }, array_keys($this->relationsMap)));
             foreach (explode('|', $returnTypes) as $returnType) {
                 if (preg_match("/($keyPattern)\$/i", $returnType, $match)) {
-                    return $this->relationsMap[ $match[1] ] ?? null;
+                    return $this->relationsMap[$match[1]] ?? null;
                 }
             }
         }
-
-        return null;
     }
 
     /**
@@ -220,12 +216,10 @@ class ModelMapper
             $returnStmt = $match[1];
             foreach (array_keys($this->relationsMap) as $returnType) {
                 // Find "->hasMany(" etc.
-                if (preg_match('/->' . preg_quote($returnType, '/') . '\(/i', $returnStmt)) {
+                if (preg_match('/->'.preg_quote($returnType, '/').'\(/i', $returnStmt)) {
                     return $this->relationsMap[$returnType];
                 }
             }
         }
-
-        return null;
     }
 }

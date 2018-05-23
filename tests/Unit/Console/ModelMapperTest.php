@@ -59,5 +59,4 @@ class ModelMapperTest extends TestCase
         $props = $modelInspector->getDefaultProperties();
         $this->assertEquals([], $props);
     }
-
 }

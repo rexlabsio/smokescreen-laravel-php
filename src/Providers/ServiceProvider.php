@@ -3,8 +3,8 @@
 namespace Rexlabs\Laravel\Smokescreen\Providers;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
-use Rexlabs\Laravel\Smokescreen\Smokescreen;
 use Rexlabs\Laravel\Smokescreen\Console\MakeTransformerCommand;
+use Rexlabs\Laravel\Smokescreen\Smokescreen;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -16,14 +16,14 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../config/smokescreen.php' => config_path('smokescreen.php'),
+            __DIR__.'/../../config/smokescreen.php' => config_path('smokescreen.php'),
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/../../stubs' => resource_path('views/vendor/smokescreen'),
+            __DIR__.'/../../stubs' => resource_path('views/vendor/smokescreen'),
         ], 'stub');
 
-        $this->loadViewsFrom(__DIR__ . '/../../stubs', 'smokescreen');
+        $this->loadViewsFrom(__DIR__.'/../../stubs', 'smokescreen');
 
         $this->commands(MakeTransformerCommand::class);
     }
@@ -41,7 +41,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->alias(Smokescreen::class, 'smokescreen');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/smokescreen.php',
+            __DIR__.'/../../config/smokescreen.php',
             'smokescreen'
         );
     }

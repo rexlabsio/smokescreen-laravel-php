@@ -11,7 +11,7 @@ class MakeTransformerCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
-     * smokescreen:transformer --for='App\Models\Post'
+     * smokescreen:transformer --for='App\Models\Post'.
      *
      * @var string
      */
@@ -48,8 +48,8 @@ class MakeTransformerCommand extends GeneratorCommand
     /**
      * Inject the dependencies.
      *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Contracts\View\Factory $viewFactory
+     * @param \Illuminate\Filesystem\Filesystem  $files
+     * @param \Illuminate\Contracts\View\Factory $viewFactory
      */
     public function __construct(
         Filesystem $files,
@@ -61,7 +61,7 @@ class MakeTransformerCommand extends GeneratorCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function handle()
     {
@@ -71,7 +71,7 @@ class MakeTransformerCommand extends GeneratorCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getStub()
     {
@@ -92,7 +92,7 @@ class MakeTransformerCommand extends GeneratorCommand
 
         // If not name-spaced, get a list of classes to search in common model namespaces.
         $search = strpos($name, '\\') !== false ? [$name] : array_map(function ($directory) use ($name) {
-            return $directory . '\\' . $name;
+            return $directory.'\\'.$name;
         }, ['App\\Models', 'App\\Model', 'App']);
 
         // Check for a valid class.
@@ -112,7 +112,7 @@ class MakeTransformerCommand extends GeneratorCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getDefaultNamespace($rootNamespace)
     {
@@ -120,7 +120,7 @@ class MakeTransformerCommand extends GeneratorCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function buildClass($name)
     {
@@ -129,12 +129,14 @@ class MakeTransformerCommand extends GeneratorCommand
     }
 
     /**
-     * @return array
      * @throws \ReflectionException
+     *
+     * @return array
      */
     protected function getTemplateData()
     {
         $modelInspector = new ModelMapper($this->getModel());
+
         return [
             'model'                => $this->getModel(),
             'modelClass'           => $this->getModelClass(),
@@ -150,7 +152,7 @@ class MakeTransformerCommand extends GeneratorCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getNameInput()
     {
@@ -185,7 +187,7 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function getTransformerClass()
     {
-        return $this->getTransformerNamespace() . '\\' . $this->getTransformerName();
+        return $this->getTransformerNamespace().'\\'.$this->getTransformerName();
     }
 
     /**
@@ -207,7 +209,7 @@ class MakeTransformerCommand extends GeneratorCommand
     {
         $class = $this->getModelClass();
 
-        return new $class;
+        return new $class();
     }
 
     /**

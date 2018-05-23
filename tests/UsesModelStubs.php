@@ -15,7 +15,6 @@ use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\User;
  */
 trait UsesModelStubs
 {
-
     protected function createSchemas()
     {
         Schema::create('users', function (Blueprint $table) {

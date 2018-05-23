@@ -5,7 +5,7 @@ return [
     // they are not explicitly provided.
     'transformer_namespace' => 'App\Transformers',
 
-
+    // Set the transformer name when mapping models to transformers.
     'transformer_name' => '{ModelName}Transformer',
 
     // Override the default serializer to be used.

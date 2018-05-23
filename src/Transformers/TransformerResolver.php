@@ -58,7 +58,7 @@ class TransformerResolver implements TransformerResolverInterface
                 $transformerName = preg_replace('/{ModelName}/i', $modelName, $this->nameTemplate);
                 $transformer = resolve(sprintf('%s\\%s', $this->namespace, $transformerName));
             } catch (\Exception $e) {
-                throw new UnresolvedTransformerException('Unable to resolve transformer for model: ' . \get_class($model),
+                throw new UnresolvedTransformerException('Unable to resolve transformer for model: '.\get_class($model),
                     0, $e);
             }
         }
