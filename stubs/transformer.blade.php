@@ -1,13 +1,10 @@
-<\?php
+<?php echo('<?php'); ?>
+
 
 namespace {{ $transformerNamespace }};
 
 use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
 
-/**
- * { $modelName }} transformer.
- *
- */
 class {{ $transformerName }} extends AbstractTransformer
 {
     /**
@@ -28,17 +25,17 @@ class {{ $transformerName }} extends AbstractTransformer
     ];
 
     /**
-    * Declare the available properties.
+    * Declare the properties to transform.
     *
     * @var array
     */
     protected $props = [
 @forelse ($properties as $property => $definition)
-    @if ($definition)
+@if ($definition)
         '{{ $property }}' => '{{ $definition }}',
-    @else
+@else
         '{{ $property }}',
-    @endif
+@endif
 @empty
         //
 @endforelse
@@ -56,6 +53,5 @@ class {{ $transformerName }} extends AbstractTransformer
 @empty
         //
 @endforelse
-];
     ];
 }

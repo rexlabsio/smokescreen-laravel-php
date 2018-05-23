@@ -15,7 +15,9 @@ class MakeTransformerCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'make:transformer {model : The model to transform. e.g. "App\User"}';
+    protected $signature = 'make:transformer
+        {model : The model to transform. e.g. "App\User"} 
+        {--force : Overwrite an existing transformer}';
 
     /**
      * The console command description.
@@ -89,7 +91,7 @@ class MakeTransformerCommand extends GeneratorCommand
         $modelClass = null;
 
         // If not name-spaced, get a list of classes to search in common model namespaces.
-        $search = str_contains('\\', $name) ? [$name] : array_map(function ($directory) use ($name) {
+        $search = strpos($name, '\\') !== false ? [$name] : array_map(function ($directory) use ($name) {
             return $directory . '\\' . $name;
         }, ['App\\Models', 'App\\Model', 'App']);
 
