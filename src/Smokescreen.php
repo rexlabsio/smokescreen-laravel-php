@@ -416,7 +416,10 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         // underlying model and attempt to resolve a transformer class.
         if ($this->smokescreen->getTransformerResolver() === null) {
             $this->smokescreen->setTransformerResolver(
-                new TransformerResolver($this->config['transformer_namespace'] ?? 'App\\Transformers')
+                new TransformerResolver(
+                    $this->config['transformer_namespace'] ?? 'App\\Transformers',
+                    $this->config['transformer_name'] ?? '{ModelName}Transformer'
+                )
             );
         }
 
