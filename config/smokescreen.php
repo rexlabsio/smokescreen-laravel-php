@@ -8,6 +8,9 @@ return [
     // Set the transformer name when mapping models to transformers.
     'transformer_name' => '{ModelName}Transformer',
 
+    // Set the directory where your application models can be found.
+    'models_directory' => 'app/',
+
     // Override the default serializer to be used.
     // If not specified - the Smokescreen DefaultSerializer will be used.
     'default_serializer' => null,
