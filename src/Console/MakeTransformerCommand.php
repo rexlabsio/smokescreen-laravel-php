@@ -11,7 +11,7 @@ class MakeTransformerCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
-     * make:transformer User
+     * make:transformer User.
      *
      * @var string
      */
@@ -76,11 +76,11 @@ class MakeTransformerCommand extends GeneratorCommand
     protected function generateAllTransformers() : void
     {
         $directory = $this->getModelsDirectory();
-        $models = (new ModelsFinder)->findInDirectory($directory);
+        $models = (new ModelsFinder())->findInDirectory($directory);
 
         foreach ($models as $model) {
             $this->call('make:transformer', [
-                'model' => class_basename($model),
+                'model'   => class_basename($model),
                 '--force' => $this->option('force'),
             ]);
         }
@@ -129,16 +129,16 @@ class MakeTransformerCommand extends GeneratorCommand
         $modelInspector = new ModelMapper($this->getModel());
 
         return [
-            'model' => $this->getModel(),
-            'modelClass' => $this->getModelClass(),
-            'modelNamespace' => $this->getModelNamespace(),
-            'modelName' => $this->getModelName(),
-            'transformerClass' => $this->getTransformerClass(),
+            'model'                => $this->getModel(),
+            'modelClass'           => $this->getModelClass(),
+            'modelNamespace'       => $this->getModelNamespace(),
+            'modelName'            => $this->getModelName(),
+            'transformerClass'     => $this->getTransformerClass(),
             'transformerNamespace' => $this->getTransformerNamespace(),
-            'transformerName' => $this->getTransformerName(),
-            'includes' => $modelInspector->getIncludes(),
-            'properties' => $modelInspector->getDeclaredProperties(),
-            'defaultProperties' => $modelInspector->getDefaultProperties(),
+            'transformerName'      => $this->getTransformerName(),
+            'includes'             => $modelInspector->getIncludes(),
+            'properties'           => $modelInspector->getDeclaredProperties(),
+            'defaultProperties'    => $modelInspector->getDefaultProperties(),
         ];
     }
 
@@ -181,7 +181,7 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function getTransformerClass()
     {
-        return $this->getTransformerNamespace() . '\\' . $this->getTransformerName();
+        return $this->getTransformerNamespace().'\\'.$this->getTransformerName();
     }
 
     /**
@@ -192,7 +192,7 @@ class MakeTransformerCommand extends GeneratorCommand
     protected function getModelClass(): string
     {
         $directory = config('smokescreen.models_directory', 'app/');
-        $file = str_finish($directory, '/') . $this->getModelName();
+        $file = str_finish($directory, '/').$this->getModelName();
         $segments = array_map('ucfirst', explode('/', $file));
 
         return implode('\\', $segments);

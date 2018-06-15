@@ -8,7 +8,6 @@ use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * The models finder.
- *
  */
 class ModelsFinder
 {
@@ -16,6 +15,7 @@ class ModelsFinder
      * Find the models in the given directory.
      *
      * @param string $directory
+     *
      * @return array
      */
     public function findInDirectory(string $directory) : array
@@ -32,7 +32,7 @@ class ModelsFinder
             $isModel = is_subclass_of($class, 'Illuminate\Database\Eloquent\Model');
 
             if ($isModel && !$isAbstract) {
-                $models[] = new $class;
+                $models[] = new $class();
             }
         }
 
@@ -43,6 +43,7 @@ class ModelsFinder
      * Retrieve the fully-qualified class name of the given file.
      *
      * @param SplFileInfo $file
+     *
      * @return string|null
      */
     protected function qualifyClassFromFile(SplFileInfo $file) : ?string
@@ -53,6 +54,6 @@ class ModelsFinder
             return null;
         }
 
-        return $namespace . '\\' . rtrim($file->getFilename(), '.php');
+        return $namespace.'\\'.rtrim($file->getFilename(), '.php');
     }
 }
