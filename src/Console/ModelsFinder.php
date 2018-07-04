@@ -45,7 +45,7 @@ class ModelsFinder
      * @param SplFileInfo $file
      * @return string|null
      */
-    protected function qualifyClassFromFile(SplFileInfo $file) : ?string
+    protected function qualifyClassFromFile(SplFileInfo $file)
     {
         preg_match('/namespace (.*);/', $file->getContents(), $matches);
 
