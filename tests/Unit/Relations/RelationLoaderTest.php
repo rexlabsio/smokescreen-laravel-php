@@ -17,7 +17,7 @@ class RelationLoaderTest extends TestCase
             ->with($this->equalTo(['users', 'boo']));
 
         $loader = new RelationLoader();
-        $loader->load(new Collection($stub, $this->createTransformer()));
+        $loader->load(new Collection($stub, $this->createTransformer()), ['users', 'boo']);
     }
 
     protected function createTransformer(): AbstractTransformer
