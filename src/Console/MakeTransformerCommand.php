@@ -17,8 +17,9 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected $signature = 'make:transformer
         {model? : The name of the model to transform. e.g. User} 
-        {--f|force : Overwrite an existing transformer}
-        {--a|all= : Generate a transformer for all models. You can optionally specify the models directory}';
+        {-f|--force : Overwrite an existing transformer}
+        {-d|--directory= : Specify the models directory }
+        {-a|--all : Generate a transformer for all models. }';
 
     /**
      * The console command description.
@@ -54,18 +55,33 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     public function handle()
     {
-        $model = $this->getModelName();
+        $model = $this->getModelInput();
         $this->type = "{$model} transformer";
 
-        if (is_null($this->argument('model'))) {
+        if ($this->option('all')) {
+            $this->line('Generating all transformers');
             $this->generateAllTransformers();
-        } elseif (!class_exists($this->getModelClass())) {
-            $this->error("The model [{$model}] does not exist.");
-        } elseif (class_exists($this->getTransformerClass()) && !$this->option('force')) {
-            $this->warn("{$this->type} already exists.");
-        } else {
-            parent::handle();
+            return;
         }
+
+        if (empty($model)) {
+            $this->error('Must specify a model or the --all option');
+            return;
+        }
+
+        // TODO: Given a models directory like app/ determine the namespace
+        if (!class_exists($modelClass = $this->getModelClass())) {
+            $this->error("The model [{$modelClass}] does not exist.");
+            return;
+        }
+
+        if (!$this->option('force') && class_exists($this->getTransformerClass())) {
+            $this->warn("{$this->type} already exists.");
+            return;
+        }
+
+
+        parent::handle();
     }
 
     /**
@@ -73,12 +89,12 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function generateAllTransformers()
     {
-        $directory = $this->getModelsDirectory();
+        $directory = $this->getModelDirectory();
         $models = (new ModelsFinder)->findInDirectory($directory);
 
         foreach ($models as $model) {
             $this->call('make:transformer', [
-                'model' => class_basename($model),
+                'model' => $model,
                 '--force' => $this->option('force'),
             ]);
         }
@@ -89,9 +105,9 @@ class MakeTransformerCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getModelsDirectory() : string
+    protected function getModelDirectory() : string
     {
-        $relativePath = $this->option('all') ?: config('smokescreen.models_directory');
+        $relativePath = $this->option('directory') ?: config('smokescreen.models_directory', 'app');
 
         if (!file_exists($absolutePath = base_path($relativePath))) {
             $this->error("The specified models directory does not exist: {$absolutePath}");
@@ -128,6 +144,7 @@ class MakeTransformerCommand extends GeneratorCommand
         $modelInspector = new ModelMapper($this->getModel());
 
         return [
+            'rootNamespace' => $this->rootNamespace(),
             'model' => $this->getModel(),
             'modelClass' => $this->getModelClass(),
             'modelNamespace' => $this->getModelNamespace(),
@@ -190,11 +207,21 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function getModelClass(): string
     {
-        $directory = config('smokescreen.models_directory', 'app/');
-        $file = str_finish($directory, '/') . $this->getModelName();
-        $segments = array_map('ucfirst', explode('/', $file));
+        $class = $this->getModelInput();
+        if (!str_contains($class, '\\')) {
+            $directory = $this->getModelDirectory();
+            $file = str_finish($directory, '/') . $this->getModelInput();
+            $segments = array_map('ucfirst', explode('/', $file));
 
-        return implode('\\', $segments);
+            $class = implode('\\', $segments);
+
+            // Make relevant to the root namespace
+            if (($pos = strpos($class, $this->rootNamespace())) !== false) {
+                $class = substr($class, $pos);
+            }
+        }
+
+        return $class;
     }
 
     /**
@@ -214,9 +241,19 @@ class MakeTransformerCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getModelName(): string
+    protected function getModelInput(): string
     {
         return ucfirst($this->argument('model'));
+    }
+
+    /**
+     * Retrieve the model class name.
+     *
+     * @return string
+     */
+    protected function getModelName(): string
+    {
+        return class_basename($this->getModelInput());
     }
 
     /**
