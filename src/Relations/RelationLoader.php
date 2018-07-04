@@ -12,34 +12,12 @@ use Rexlabs\Smokescreen\Resource\ResourceInterface;
  */
 class RelationLoader implements RelationLoaderInterface
 {
-    public function load(ResourceInterface $resource)
+    public function load(ResourceInterface $resource, array $relationshipKeys)
     {
         // Eager load relationships on collections
-        $resourceData = $resource->getData();
-        if ($resourceData instanceof Collection) {
-            $keys = $this->getRelationshipKeys($resource);
-            if (!empty($keys)) {
-                $resourceData->load($keys);
-            }
+        $obj = $resource->getData();
+        if ($obj instanceof Collection) {
+            $obj->load($relationshipKeys);
         }
-    }
-
-    /**
-     * Return all the unique relationship keys for a resource.
-     *
-     * @param ResourceInterface $resource
-     *
-     * @return array
-     */
-    protected function getRelationshipKeys(ResourceInterface $resource): array
-    {
-        $keys = [];
-        foreach ($resource->getRelationships() as $key => $relationships) {
-            if (!empty($relationships)) {
-                array_push($keys, ...$relationships);
-            }
-        }
-
-        return array_unique($keys);
     }
 }
