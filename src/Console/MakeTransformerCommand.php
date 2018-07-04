@@ -70,10 +70,8 @@ class MakeTransformerCommand extends GeneratorCommand
 
     /**
      * Generate a transformer for every model.
-     *
-     * @return void
      */
-    protected function generateAllTransformers() : void
+    protected function generateAllTransformers()
     {
         $directory = $this->getModelsDirectory();
         $models = (new ModelsFinder)->findInDirectory($directory);
@@ -96,7 +94,8 @@ class MakeTransformerCommand extends GeneratorCommand
         $relativePath = $this->option('all') ?: config('smokescreen.models_directory');
 
         if (!file_exists($absolutePath = base_path($relativePath))) {
-            exit($this->error("The specified models directory does not exist: {$absolutePath}"));
+            $this->error("The specified models directory does not exist: {$absolutePath}");
+            exit();
         }
 
         return $absolutePath;
