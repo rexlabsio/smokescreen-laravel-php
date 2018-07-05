@@ -150,6 +150,8 @@ class ModelMapper
         if ($type = $this->getResourceTypeByMethodBody($method)) {
             return $type;
         }
+
+        return null;
     }
 
     /**
@@ -165,10 +167,9 @@ class ModelMapper
         $namespace = 'Illuminate\Database\Eloquent\Relations';
 
         if (!starts_with($returnType, $namespace)) {
-            return;
+            return null;
         }
 
-//        $relation = lcfirst(class_basename($returnType));
         $relation = class_basename($returnType);
 
         return $this->relationsMap[$relation] ?? null;
@@ -196,6 +197,8 @@ class ModelMapper
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -221,5 +224,7 @@ class ModelMapper
                 }
             }
         }
+
+        return null;
     }
 }
