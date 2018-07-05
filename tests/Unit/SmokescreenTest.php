@@ -573,6 +573,41 @@ class SmokescreenTest extends TestCase
             ->toArray();
     }
 
+    public function test_can_handle_null_resource()
+    {
+        $transformer = new class() extends AbstractTransformer {
+            protected $includes = [
+                'user' => 'default',
+                'comments' => 'default',
+            ];
+
+            public function transform($data)
+            {
+                return $data;
+            }
+
+            public function includeUser($data)
+            {
+                return $this->item(null);
+            }
+
+            public function includeComments($data)
+            {
+                return $this->collection(null);
+            }
+        };
+
+        $defaultSerializer = new DefaultSerializer();
+        $smokescreen = Smokescreen::make();
+        $smokescreen->item([
+            'id' => '1234',
+            'email' => 'bob@example.com',
+        ], $transformer);
+        $output = $smokescreen->toArray();
+        $this->assertEquals($defaultSerializer->nullCollection(), $output['comments']);
+        $this->assertEquals($defaultSerializer->nullItem(), $output['user']);
+    }
+
     protected function createQueryBuilder(): \Illuminate\Database\Query\Builder
     {
         return new \Illuminate\Database\Query\Builder(
