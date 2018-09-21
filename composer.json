@@ -20,16 +20,11 @@
   "require": {
     "php": ">=7.0",
     "rexlabs/smokescreen": "^2.0.0",
-    "illuminate/contracts": "~5.5.0|~5.6.0",
-    "illuminate/database": "~5.5.0|~5.6.0",
-    "illuminate/http": "~5.5.0|~5.6.0",
-    "illuminate/pagination": "~5.5.0|~5.6.0",
-    "illuminate/support": "~5.5.0|~5.6.0",
-    "illuminate/console": "~5.5.0|~5.6.0",
+    "laravel/framework": "~5.5.0|~5.6.0|~5.7.0",
     "doctrine/dbal": "^2.5|^2.7"
   },
   "require-dev": {
-    "orchestra/testbench": "~3.5.0|~3.6.0",
+    "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0",
     "phpunit/phpunit": "^6.5.7|^7.0"
   },
   "autoload": {
