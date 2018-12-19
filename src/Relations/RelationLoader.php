@@ -17,7 +17,7 @@ class RelationLoader implements RelationLoaderInterface
         // Eager load relationships on collections
         $obj = $resource->getData();
         if ($obj instanceof Collection) {
-            $obj->load($relationshipKeys);
+            $obj->loadMissing($relationshipKeys);
         }
     }
 }

@@ -13,7 +13,7 @@ class RelationLoaderTest extends TestCase
     {
         $stub = $this->createMock(\Illuminate\Database\Eloquent\Collection::class);
         $stub->expects($this->once())
-            ->method('load')
+            ->method('loadMissing')
             ->with($this->equalTo(['users', 'boo']));
 
         $loader = new RelationLoader();
