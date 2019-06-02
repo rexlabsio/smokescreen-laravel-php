@@ -4,6 +4,7 @@ namespace Rexlabs\Laravel\Smokescreen\Console;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -166,7 +167,7 @@ class ModelMapper
         $returnType = (string) $method->getReturnType();
         $namespace = 'Illuminate\Database\Eloquent\Relations';
 
-        if (!starts_with($returnType, $namespace)) {
+        if (!Str::startsWith($returnType, $namespace)) {
             return null;
         }
 

@@ -14,6 +14,14 @@ return [
     // Override the default serializer to be used.
     // If not specified - the Smokescreen DefaultSerializer will be used.
     'default_serializer' => null,
+    
+    // Override the default compositor to be used.
+    // If not specified - the Smokescreen DefaultCompositor will be used.
+    'default_compositor' => null,
+
+    // Set default headers for all responses, can be overridden for
+    // individual responses.
+    'default_headers' => [],
 
     // Override the default transformer resolver to be used.
     // If not specified - the Laravel Smokescreen TransformerResolver will be used.

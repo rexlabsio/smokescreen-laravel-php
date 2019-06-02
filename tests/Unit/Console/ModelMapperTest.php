@@ -30,24 +30,19 @@ class ModelMapperTest extends TestCase
 
         $modelInspector = new ModelMapper(Post::find(1));
         $props = $modelInspector->getDeclaredProperties();
-        $this->assertArraySubset([
+        $expected = [
             'id' => 'integer',
-        ], $props);
-        $this->assertArraySubset([
             'title' => 'string',
-        ], $props);
-        $this->assertArraySubset([
             'body' => 'string',
-        ], $props);
-        $this->assertArraySubset([
             'created_at' => 'datetime',
-        ], $props);
-        $this->assertArraySubset([
             'updated_at' => 'datetime',
-        ], $props);
-        $this->assertArraySubset([
             'origin' => 'string',
-        ], $props);
+        ];
+
+        foreach ($expected as $key => $value) {
+            $this->assertArrayHasKey($key, $props);
+            $this->assertEquals($props[$key], $value);
+        }
     }
 
     public function test_get_default_properties()

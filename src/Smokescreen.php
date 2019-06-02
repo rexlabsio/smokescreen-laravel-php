@@ -22,6 +22,7 @@ use Rexlabs\Laravel\Smokescreen\Relations\RelationLoader;
 use Rexlabs\Laravel\Smokescreen\Resources\CollectionResource;
 use Rexlabs\Laravel\Smokescreen\Resources\ItemResource;
 use Rexlabs\Laravel\Smokescreen\Transformers\TransformerResolver;
+use Rexlabs\Smokescreen\Compositor\CompositorInterface;
 use Rexlabs\Smokescreen\Exception\MissingResourceException;
 use Rexlabs\Smokescreen\Helpers\JsonHelper;
 use Rexlabs\Smokescreen\Relations\RelationLoaderInterface;
@@ -55,6 +56,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 
     /** @var SerializerInterface|null */
     protected $serializer;
+
+    /** @var CompositorInterface|null */
+    protected $compositor;
 
     /** @var Request|null */
     protected $request;
@@ -298,6 +302,20 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     }
 
     /**
+     * Set the default compositor to be used for resources which do not have an explictly set compositor.
+     *
+     * @param CompositorInterface|null $compositor
+     *
+     * @return $this|\Illuminate\Contracts\Support\Responsable
+     */
+    public function composeWith($compositor)
+    {
+        $this->compositor = $compositor;
+
+        return $this;
+    }
+
+    /**
      * Set the relationship loader.
      * The relationship loader takes the relationships defined on a transformer, and eager-loads them.
      *
@@ -421,6 +439,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         $serializer = $this->serializer ?? null;
         $this->smokescreen->setSerializer($serializer);
 
+        // Compositor may be overridden via config.
+        // We may be setting the compositor to null, in which case a default
+        // will be provided.
+        $compositor = $this->compositor ?? null;
+        $this->smokescreen->setCompositor($compositor);
+
         // Assign any includes.
         if ($this->includes) {
             // Includes have been set explicitly.
@@ -537,7 +561,12 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     {
         // Response will only be generated once. use clearResponse() to clear.
         if ($this->response === null) {
-            $this->response = new JsonResponse($this->toArray(), $statusCode, $headers, $options);
+            $this->response = new JsonResponse(
+                $this->toArray(),
+                $statusCode,
+                array_merge(Arr::get($this->config, 'default_headers', []), $headers),
+                $options
+            );
         }
 
         return $this->response;
@@ -698,6 +727,17 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             }
             $this->resolveTransformerVia($transformerResolver);
             unset($config['default_transformer_resolver']);
+        }
+
+        if (!empty($config['default_compositor'])) {
+            $compositor = $config['default_compositor'];
+            if (\is_string($compositor)) {
+                // Given compositor is expected to be a class path
+                // Instantiate via the container
+                $compositor = app()->make($compositor);
+            }
+            $this->composeWith($compositor);
+            unset($config['default_compositor']);
         }
 
         $this->config = $config;
