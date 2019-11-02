@@ -18,7 +18,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.1",
     "rexlabs/smokescreen": "^2.0",
     "laravel/framework": "^5.6|^6.0",
     "doctrine/dbal": "^2.5|^2.7"
