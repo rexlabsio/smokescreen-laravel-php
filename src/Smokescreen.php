@@ -100,9 +100,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      * Set the resource (item or collection) data to be transformed.
      * You should pass in an instance of a Model.
      *
-     * @param mixed|Model|array                  $data
-     * @param callable|TransformerInterface|null $transformer
-     * @param string|null                        $resourceKey
+     * @param mixed|Model|array                         $data
+     * @param callable|TransformerInterface|string|null $transformer
+     * @param string|null                               $resourceKey
      *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      *
@@ -190,9 +190,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Set an item resource to be transformed.
      *
-     * @param mixed                              $data
-     * @param callable|TransformerInterface|null $transformer
-     * @param string|null                        $resourceKey
+     * @param mixed                                      $data
+     * @param callable|TransformerInterface|string||null $transformer
+     * @param string|null                                $resourceKey
      *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      *
@@ -200,6 +200,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      */
     public function item($data, $transformer = null, $resourceKey = null)
     {
+        // Autoload transformer if required
+        $transformer = $this->injectTransformer($transformer);
+
         $this->setResource(new Item($data, $transformer, $resourceKey));
 
         return $this;
@@ -208,9 +211,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
     /**
      * Set a collection resource to be transformed.
      *
-     * @param mixed                              $data
-     * @param callable|TransformerInterface|null $transformer
-     * @param string|null                        $resourceKey
+     * @param mixed                                     $data
+     * @param callable|TransformerInterface|string|null $transformer
+     * @param string|null                               $resourceKey
      *
      * @throws \Rexlabs\Smokescreen\Exception\InvalidTransformerException
      *
@@ -218,6 +221,9 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      */
     public function collection($data, $transformer = null, $resourceKey = null)
     {
+        // Autoload transformer if required
+        $transformer = $this->injectTransformer($transformer);
+
         $paginator = null;
 
         if ($data instanceof LengthAwarePaginator) {
@@ -240,6 +246,22 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         $this->setResource($resource);
 
         return $this;
+    }
+
+    /**
+     * Resolve transformer from container if it's a class string
+     *
+     * @param callable|TransformerInterface|string|null $transformer
+     *
+     * @return callable|TransformerInterface|string|null
+     */
+    private function injectTransformer($transformer = null)
+    {
+        if (is_string($transformer)) {
+            return app($transformer);
+        }
+
+        return $transformer;
     }
 
     /**

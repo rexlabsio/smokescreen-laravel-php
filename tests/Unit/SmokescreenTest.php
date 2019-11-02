@@ -18,6 +18,7 @@ use Rexlabs\Laravel\Smokescreen\Resources\ItemResource;
 use Rexlabs\Laravel\Smokescreen\Smokescreen;
 use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\Post;
 use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\User;
+use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Transformers\PostTransformer;
 use Rexlabs\Laravel\Smokescreen\Tests\TestCase;
 use Rexlabs\Laravel\Smokescreen\Tests\UsesModelStubs;
 use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
@@ -203,6 +204,22 @@ class SmokescreenTest extends TestCase
         // HasMany
         $data = new HasMany(new Builder($this->createQueryBuilder()), $this->createModel(), 'foreign', 'local');
         $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+    }
+
+    public function test_item_method_can_load_transformer_from_container()
+    {
+        $smokescreen = Smokescreen::make();
+        $smokescreen->item(new \stdClass(), PostTransformer::class);
+        $transformer = $smokescreen->getResource()->getTransformer();
+        $this->assertInstanceOf(PostTransformer::class, $transformer);
+    }
+
+    public function test_collection_method_can_load_transformer_from_container()
+    {
+        $smokescreen = Smokescreen::make();
+        $smokescreen->collection([], PostTransformer::class);
+        $transformer = $smokescreen->getResource()->getTransformer();
+        $this->assertInstanceOf(PostTransformer::class, $transformer);
     }
 
     public function test_set_transformer_without_setting_resource_first_throws_exception()

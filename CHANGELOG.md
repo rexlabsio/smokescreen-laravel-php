@@ -8,6 +8,7 @@ Changelog for Laravel Smokescreen
 - Officially dropping support for laravel 5.5 (was already not working)
 - Drop support for php 7.0 (new requirement 7.1 from laravel 5.6)
 - Bumping major version just to be safe
+- [Resolve transformers from class name using app](https://github.com/rexlabsio/smokescreen-laravel-php/issues/16)
 
 ## 1.3.2
 
