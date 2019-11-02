@@ -667,6 +667,17 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             unset($config['default_serializer']);
         }
 
+        if (!empty($config['default_transformer_resolver'])) {
+            $transformerResolver= $config['default_transformer_resolver'];
+            if (\is_string($transformerResolver)) {
+                // Given transformer resolver is expected to be a class path
+                // Instantiate via the container
+                $transformerResolver = app()->make($transformerResolver);
+            }
+            $this->resolveTransformerVia($transformerResolver);
+            unset($config['default_transformer_resolver']);
+        }
+
         $this->config = $config;
     }
 }

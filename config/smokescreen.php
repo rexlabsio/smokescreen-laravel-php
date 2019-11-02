@@ -15,6 +15,10 @@ return [
     // If not specified - the Smokescreen DefaultSerializer will be used.
     'default_serializer' => null,
 
+    // Override the default transformer resolver to be used.
+    // If not specified - the Laravel Smokescreen TransformerResolver will be used.
+    'default_transformer_resolver' => null,
+
     // Set the default request parameter key which is parsed for
     // the list of includes.
     'include_key' => 'include',

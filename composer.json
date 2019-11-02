@@ -19,11 +19,12 @@
   ],
   "require": {
     "php": ">=7.0",
-    "rexlabs/smokescreen": "^2.0.0",
+    "rexlabs/smokescreen": "^2.0",
     "laravel/framework": "^5.5|^6.0",
     "doctrine/dbal": "^2.5|^2.7"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-master",
     "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0",
     "phpunit/phpunit": "^6.5.7|^7.0"
   },
@@ -48,8 +49,8 @@
     }
   },
   "scripts": {
-    "test": "phpunit",
-    "tests": "phpunit --colors=always",
+    "test": "phpunit --color=always",
+    "tests": "phpunit --color=always",
     "coverage": "phpunit --coverage-html ./tests/report"
   },
   "license": "MIT"

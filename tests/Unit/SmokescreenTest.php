@@ -21,6 +21,7 @@ use Rexlabs\Laravel\Smokescreen\Tests\Stubs\Models\User;
 use Rexlabs\Laravel\Smokescreen\Tests\TestCase;
 use Rexlabs\Laravel\Smokescreen\Tests\UsesModelStubs;
 use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
+use Rexlabs\Laravel\Smokescreen\Transformers\TransformerResolver;
 use Rexlabs\Smokescreen\Exception\MissingResourceException;
 use Rexlabs\Smokescreen\Serializer\DefaultSerializer;
 use Rexlabs\Smokescreen\Transformer\TransformerInterface;
@@ -464,6 +465,41 @@ class SmokescreenTest extends TestCase
         $stub->__construct(
             new \Rexlabs\Smokescreen\Smokescreen(),
             ['default_serializer' => $obj]
+        );
+    }
+
+    public function test_default_transformer_resolver_can_be_configured_with_class_name()
+    {
+        $this->app->bind(TransformerResolver::class, function () {
+            return new TransformerResolver('', '');
+        });
+        $stub = $this->getMockBuilder(Smokescreen::class)
+            ->setMethods(['resolveTransformerVia'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $stub->expects($this->once())
+            ->method('resolveTransformerVia')
+            ->with($this->equalTo(new TransformerResolver('', '')));
+        $stub->__construct(
+            new \Rexlabs\Smokescreen\Smokescreen(),
+            ['default_transformer_resolver' => TransformerResolver::class]
+        );
+    }
+
+    public function test_default_transformer_resolver_can_be_configured_with_object()
+    {
+        $obj = new class('', '') extends TransformerResolver {
+        };
+        $stub = $this->getMockBuilder(Smokescreen::class)
+            ->setMethods(['resolveTransformerVia'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $stub->expects($this->once())
+            ->method('resolveTransformerVia')
+            ->with($this->equalTo($obj));
+        $stub->__construct(
+            new \Rexlabs\Smokescreen\Smokescreen(),
+            ['default_transformer_resolver' => $obj]
         );
     }
 
