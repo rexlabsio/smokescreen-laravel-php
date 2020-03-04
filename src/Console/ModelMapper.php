@@ -4,8 +4,10 @@ namespace Rexlabs\Laravel\Smokescreen\Console;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 
 /**
  * The includes listing.
@@ -163,10 +165,19 @@ class ModelMapper
      */
     protected function getResourceTypeByReturnType(ReflectionMethod $method)
     {
-        $returnType = (string) $method->getReturnType();
+        $refReturnType = $method->getReturnType();
+        if ($refReturnType === null) {
+            return null;
+        }
+
+        if (!$refReturnType instanceof ReflectionNamedType) {
+            return null;
+        }
+
+        $returnType = $refReturnType->getName();
         $namespace = 'Illuminate\Database\Eloquent\Relations';
 
-        if (!starts_with($returnType, $namespace)) {
+        if (!Str::startsWith($returnType, $namespace)) {
             return null;
         }
 

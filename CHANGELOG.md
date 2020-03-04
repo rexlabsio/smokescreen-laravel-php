@@ -2,6 +2,11 @@
 
 Changelog for Laravel Smokescreen
 
+## 2.0.1
+
+- Update to laravel 7.0
+- Switch from deprecated methods
+
 ## 2.0.0
 
 - Correct advertised versions (`loadMissing` added in laravel 5.6)
