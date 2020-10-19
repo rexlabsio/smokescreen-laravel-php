@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="RexPSR12Standard">
+    <description>Rex PSR12 Standard</description>
+    <arg name="colors"/>
+
+    <!-- check most of project -->
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- start with psr12 -->
+    <rule ref="PSR12"/>
+
+    <!-- allow snake case for test methods -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+</ruleset>

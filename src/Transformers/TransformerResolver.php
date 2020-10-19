@@ -10,10 +10,14 @@ use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
 
 class TransformerResolver implements TransformerResolverInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $namespace;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $nameTemplate;
 
     /**
@@ -58,8 +62,11 @@ class TransformerResolver implements TransformerResolverInterface
                 $transformerName = preg_replace('/{ModelName}/i', $modelName, $this->nameTemplate);
                 $transformer = resolve(sprintf('%s\\%s', $this->namespace, $transformerName));
             } catch (\Exception $e) {
-                throw new UnresolvedTransformerException('Unable to resolve transformer for model: '.\get_class($model),
-                    0, $e);
+                throw new UnresolvedTransformerException(
+                    'Unable to resolve transformer for model: ' . \get_class($model),
+                    0,
+                    $e
+                );
             }
         }
 

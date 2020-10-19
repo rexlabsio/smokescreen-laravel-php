@@ -5,13 +5,14 @@ namespace Rexlabs\Laravel\Smokescreen;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -40,35 +41,53 @@ use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
  */
 class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
 {
-    const TYPE_ITEM_RESOURCE = 'item';
-    const TYPE_COLLECTION_RESOURCE = 'collection';
-    const TYPE_AMBIGUOUS_RESOURCE = 'ambiguous';
+    public const TYPE_ITEM_RESOURCE = 'item';
+    public const TYPE_COLLECTION_RESOURCE = 'collection';
+    public const TYPE_AMBIGUOUS_RESOURCE = 'ambiguous';
 
-    /** @var \Rexlabs\Smokescreen\Smokescreen */
+    /**
+     * @var \Rexlabs\Smokescreen\Smokescreen
+     */
     protected $smokescreen;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     protected $includes;
 
-    /** @var string|bool Whether includes should be parsed from a request key */
+    /**
+     * @var string|bool Whether includes should be parsed from a request key
+     */
     protected $autoParseIncludes = true;
 
-    /** @var SerializerInterface|null */
+    /**
+     * @var SerializerInterface|null
+     */
     protected $serializer;
 
-    /** @var Request|null */
+    /**
+     * @var Request|null
+     */
     protected $request;
 
-    /** @var Response|null */
+    /**
+     * @var Response|null
+     */
     protected $response;
 
-    /** @var ResourceInterface|null */
+    /**
+     * @var ResourceInterface|null
+     */
     protected $resource;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $config;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $injections;
 
     /**
@@ -152,7 +171,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             return self::TYPE_COLLECTION_RESOURCE;
         }
 
-        if ($data instanceof \Illuminate\Database\Eloquent\Builder || $data instanceof \Illuminate\Database\Query\Builder) {
+        if ($data instanceof EloquentBuilder || $data instanceof QueryBuilder) {
             // Treat query builders as a collection
             return self::TYPE_COLLECTION_RESOURCE;
         }
@@ -231,7 +250,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
             $data = $data->getCollection();
         } elseif ($data instanceof Relation) {
             $data = $data->get();
-        } elseif ($data instanceof Builder) {
+        } elseif ($data instanceof EloquentBuilder) {
             $data = $data->get();
         } elseif ($data instanceof Model) {
             $data = new Collection([$data]);
@@ -690,7 +709,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
         }
 
         if (!empty($config['default_transformer_resolver'])) {
-            $transformerResolver= $config['default_transformer_resolver'];
+            $transformerResolver = $config['default_transformer_resolver'];
             if (\is_string($transformerResolver)) {
                 // Given transformer resolver is expected to be a class path
                 // Instantiate via the container

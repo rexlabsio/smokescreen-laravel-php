@@ -24,31 +24,36 @@ use Rexlabs\Laravel\Smokescreen\Tests\UsesModelStubs;
 use Rexlabs\Laravel\Smokescreen\Transformers\AbstractTransformer;
 use Rexlabs\Laravel\Smokescreen\Transformers\TransformerResolver;
 use Rexlabs\Smokescreen\Exception\MissingResourceException;
+use Rexlabs\Smokescreen\Resource\Item;
 use Rexlabs\Smokescreen\Serializer\DefaultSerializer;
 use Rexlabs\Smokescreen\Transformer\TransformerInterface;
 use Rexlabs\Smokescreen\Transformer\TransformerResolverInterface;
 
+/**
+ * Class SmokescreenTest
+ * @package Rexlabs\Laravel\Smokescreen\Tests\Unit
+ */
 class SmokescreenTest extends TestCase
 {
     use UsesModelStubs;
 
-    public function test_can_get_base_smokescreen_instance()
+    public function test_can_get_base_smokescreen_instance(): void
     {
         $smokescreen = Smokescreen::make();
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Smokescreen::class, $smokescreen->getBaseSmokescreen());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Smokescreen::class, $smokescreen->getBaseSmokescreen());
     }
 
-    public function test_transform_on_item_sets_item_resource()
+    public function test_transform_on_item_sets_item_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(
-            new class() implements ItemResource {
+            new class () implements ItemResource {
             }
         );
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
+        self::assertInstanceOf(Item::class, $smokescreen->getResource());
     }
 
-    public function test_transform_on_assoc_array_sets_item_resource()
+    public function test_transform_on_assoc_array_sets_item_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(
@@ -57,55 +62,55 @@ class SmokescreenTest extends TestCase
                 'age'  => 21,
             ]
         );
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
+        self::assertInstanceOf(Item::class, $smokescreen->getResource());
     }
 
-    public function test_transform_on_collection_sets_collection_resource()
+    public function test_transform_on_collection_sets_collection_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(
-            new class() implements CollectionResource {
+            new class () implements CollectionResource {
             }
         );
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_transform_on_sequential_array_sets_collection_resource()
+    public function test_transform_on_sequential_array_sets_collection_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(['one', 'two', 'three']);
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_transform_on_unknown_resource_sets_item_resource()
+    public function test_transform_on_unknown_resource_sets_item_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->transform(new \stdClass());
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
+        self::assertInstanceOf(Item::class, $smokescreen->getResource());
     }
 
-    public function test_item_method_sets_item_resource()
+    public function test_item_method_sets_item_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->item(new \stdClass());
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Item::class, $smokescreen->getResource());
+        self::assertInstanceOf(Item::class, $smokescreen->getResource());
     }
 
-    public function test_collection_method_sets_collection_resource()
+    public function test_collection_method_sets_collection_resource(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->collection([]);
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_collection_method_with_paginator_sets_collection()
+    public function test_collection_method_with_paginator_sets_collection(): void
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->collection(new LengthAwarePaginator(['one'], 1, 15));
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_collection_method_with_relation_sets_collection()
+    public function test_collection_method_with_relation_sets_collection(): void
     {
         $this->createSchemas();
         $this->createModels();
@@ -115,95 +120,95 @@ class SmokescreenTest extends TestCase
             Post::first()
                 ->comments()
         );
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_collection_method_with_builder_sets_collection()
+    public function test_collection_method_with_builder_sets_collection(): void
     {
         $this->createSchemas();
         $this->createModels();
 
         $smokescreen = Smokescreen::make();
         $smokescreen->collection(Post::where('id', 1));
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_collection_method_with_model_sets_collection()
+    public function test_collection_method_with_model_sets_collection(): void
     {
         $this->createSchemas();
         $this->createModels();
 
         $smokescreen = Smokescreen::make();
         $smokescreen->collection(Post::first());
-        $this->assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
+        self::assertInstanceOf(\Rexlabs\Smokescreen\Resource\Collection::class, $smokescreen->getResource());
     }
 
-    public function test_infer_resource_type_of_declared_item_resource()
+    public function test_infer_resource_type_of_declared_item_resource(): void
     {
         $smokescreen = Smokescreen::make();
 
-        $data = new class() implements ItemResource {
+        $data = new class () implements ItemResource {
         };
-        $this->assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
     }
 
-    public function test_infer_resource_type_of_declared_collection_resource()
+    public function test_infer_resource_type_of_declared_collection_resource(): void
     {
         $smokescreen = Smokescreen::make();
 
-        $data = new class() implements CollectionResource {
+        $data = new class () implements CollectionResource {
         };
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
     }
 
-    public function test_infer_resource_type_of_model()
+    public function test_infer_resource_type_of_model(): void
     {
         $smokescreen = Smokescreen::make();
 
         // Eloquent model
-        $data = new class() extends Model {
+        $data = new class () extends Model {
         };
-        $this->assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Associative array
         $data = ['name' => 'Bob', 'age' => 21];
-        $this->assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_ITEM_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Sequential array
         $data = ['item1', 'item2', 'item3'];
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Anonymous class
-        $data = new class() {
+        $data = new class () {
         };
-        $this->assertEquals(Smokescreen::TYPE_AMBIGUOUS_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_AMBIGUOUS_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Laravel collection
-        $data = new class() extends Collection {
+        $data = new class () extends Collection {
         };
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Eloquent collection
-        $data = new class() extends \Illuminate\Database\Eloquent\Collection {
+        $data = new class () extends \Illuminate\Database\Eloquent\Collection {
         };
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Paginator
-        $data = new class([], 0, 15) extends LengthAwarePaginator {
+        $data = new class ([], 0, 15) extends LengthAwarePaginator {
         };
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Query Builder
         $data = $this->createQueryBuilder();
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // Eloquent Builder
         $data = new Builder($this->createQueryBuilder());
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
 
         // HasMany
         $data = new HasMany(new Builder($this->createQueryBuilder()), $this->createModel(), 'foreign', 'local');
-        $this->assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
+        self::assertEquals(Smokescreen::TYPE_COLLECTION_RESOURCE, $smokescreen->determineResourceType($data));
     }
 
     public function test_item_method_can_load_transformer_from_container()
@@ -211,7 +216,7 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make();
         $smokescreen->item(new \stdClass(), PostTransformer::class);
         $transformer = $smokescreen->getResource()->getTransformer();
-        $this->assertInstanceOf(PostTransformer::class, $transformer);
+        self::assertInstanceOf(PostTransformer::class, $transformer);
     }
 
     public function test_collection_method_can_load_transformer_from_container()
@@ -219,7 +224,7 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make();
         $smokescreen->collection([], PostTransformer::class);
         $transformer = $smokescreen->getResource()->getTransformer();
-        $this->assertInstanceOf(PostTransformer::class, $transformer);
+        self::assertInstanceOf(PostTransformer::class, $transformer);
     }
 
     public function test_set_transformer_without_setting_resource_first_throws_exception()
@@ -233,14 +238,15 @@ class SmokescreenTest extends TestCase
     {
         $smokescreen = Smokescreen::make();
         $smokescreen->item(new \stdClass());
-        $this->assertNull(
+        self::assertNull(
             $smokescreen->getResource()
                 ->getTransformer()
         );
         $smokescreen->transformWith($this->createTransformer());
-        $this->assertInstanceOf(
-            TransformerInterface::class, $smokescreen->getResource()
-            ->getTransformer()
+        self::assertInstanceOf(
+            TransformerInterface::class,
+            $smokescreen->getResource()
+                ->getTransformer()
         );
     }
 
@@ -266,10 +272,11 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make()
             ->transform($data)
             ->serializeWith($this->createSerializer());
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'custom_serialize' => $data,
-            ], $smokescreen->toArray()
+            ],
+            $smokescreen->toArray()
         );
     }
 
@@ -279,9 +286,9 @@ class SmokescreenTest extends TestCase
         $stub = $this->getMockBuilder(\Rexlabs\Smokescreen\Smokescreen::class)
             ->setMethods(['setRelationLoader'])
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('setRelationLoader')
-            ->with($this->equalTo($loader));
+            ->with(self::equalTo($loader));
         $smokescreen = Smokescreen::make($stub);
         $smokescreen->loadRelationsVia($loader);
     }
@@ -302,11 +309,11 @@ class SmokescreenTest extends TestCase
             ->transform($data)
             ->serializeWith($this->createSerializer());
         $result = $smokescreen->toObject();
-        $this->assertInstanceOf(\stdClass::class, $result);
-        $this->assertTrue(property_exists($result, 'custom_serialize'));
-        $this->assertCount(2, $result->custom_serialize);
-        $this->assertInstanceOf(\stdClass::class, $result->custom_serialize[0]);
-        $this->assertInstanceOf(\stdClass::class, $result->custom_serialize[1]);
+        self::assertInstanceOf(\stdClass::class, $result);
+        self::assertTrue(property_exists($result, 'custom_serialize'));
+        self::assertCount(2, $result->custom_serialize);
+        self::assertInstanceOf(\stdClass::class, $result->custom_serialize[0]);
+        self::assertInstanceOf(\stdClass::class, $result->custom_serialize[1]);
     }
 
     public function test_includes_are_parsed()
@@ -327,16 +334,16 @@ class SmokescreenTest extends TestCase
         $stub = $this->getMockBuilder(\Rexlabs\Smokescreen\Smokescreen::class)
             ->setMethods(['parseIncludes'])
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('parseIncludes')
-            ->with($this->equalTo($includeStr));
+            ->with(self::equalTo($includeStr));
         $smokescreen = Smokescreen::make($stub)
             ->transform($data, $this->createTransformer())
             ->include($includeStr);
 
         // Note data, wont actually include our includes since we mocked the parseIncludes method.
         $result = $smokescreen->toArray();
-        $this->assertEquals(['data' => $data], $result);
+        self::assertEquals(['data' => $data], $result);
     }
 
     public function test_can_disable_includes()
@@ -344,16 +351,19 @@ class SmokescreenTest extends TestCase
         $this->createSchemas();
         $this->createModels();
 
-        $smokescreen = Smokescreen::make(null, [
+        $smokescreen = Smokescreen::make(
+            null,
+            [
                  'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
-            ])
+            ]
+        )
             ->transform(Post::first())
             ->include('user,comments');
 
-        $this->assertArrayHasKey('user', $smokescreen->toArray());
+        self::assertArrayHasKey('user', $smokescreen->toArray());
 
         $smokescreen->noIncludes();
-        $this->assertArrayNotHasKey('user', $smokescreen->toArray());
+        self::assertArrayNotHasKey('user', $smokescreen->toArray());
     }
 
     public function test_transformer_is_resolved_for_model()
@@ -363,14 +373,16 @@ class SmokescreenTest extends TestCase
 
         $post = Post::first();
         $smokescreen = Smokescreen::make(
-            null, [
+            null,
+            [
             'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
-        ]
+            ]
         );
         $smokescreen->transform($post);
         $smokescreen->toArray();
-        $this->assertEquals(
-            'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers\\PostTransformer', \get_class(
+        self::assertEquals(
+            'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers\\PostTransformer',
+            \get_class(
                 $smokescreen->getResource()
                     ->getTransformer()
             )
@@ -383,14 +395,16 @@ class SmokescreenTest extends TestCase
         $this->createModels();
 
         $smokescreen = Smokescreen::make(
-            null, [
+            null,
+            [
             'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
-        ]
+            ]
         );
         $smokescreen->transform(Post::all());
         $smokescreen->toArray();
-        $this->assertEquals(
-            'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers\\PostTransformer', \get_class(
+        self::assertEquals(
+            'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers\\PostTransformer',
+            \get_class(
                 $smokescreen->getResource()
                     ->getTransformer()
             )
@@ -403,14 +417,16 @@ class SmokescreenTest extends TestCase
         $this->createModels();
 
         $smokescreen = Smokescreen::make(
-            null, [
+            null,
+            [
             'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
-        ]
+            ]
         );
         $smokescreen->transform(Post::paginate());
         $smokescreen->toArray();
-        $this->assertEquals(
-            'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers\\PostTransformer', \get_class(
+        self::assertEquals(
+            'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers\\PostTransformer',
+            \get_class(
                 $smokescreen->getResource()
                     ->getTransformer()
             )
@@ -423,9 +439,10 @@ class SmokescreenTest extends TestCase
         $this->createModels();
 
         $smokescreen = Smokescreen::make(
-            null, [
+            null,
+            [
             'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
-        ]
+            ]
         );
         $smokescreen->transform(User::first());
         $this->expectException(UnresolvedTransformerException::class);
@@ -435,22 +452,22 @@ class SmokescreenTest extends TestCase
     public function test_include_key_defaults_to_include()
     {
         $smokescreen = Smokescreen::make();
-        $this->assertEquals('include', $smokescreen->getIncludeKey());
+        self::assertEquals('include', $smokescreen->getIncludeKey());
     }
 
     public function test_include_key_can_be_configured()
     {
         $smokescreen = Smokescreen::make(null, ['include_key' => 'override']);
-        $this->assertEquals('override', $smokescreen->getIncludeKey());
+        self::assertEquals('override', $smokescreen->getIncludeKey());
     }
 
     public function test_include_key_can_be_overridden_in_sub_class()
     {
-        $smokescreen = new class(new \Rexlabs\Smokescreen\Smokescreen()) extends Smokescreen {
+        $smokescreen = new class (new \Rexlabs\Smokescreen\Smokescreen()) extends Smokescreen {
             protected $autoParseIncludes = 'auto_parse_key';
         };
 
-        $this->assertEquals('auto_parse_key', $smokescreen->getIncludeKey());
+        self::assertEquals('auto_parse_key', $smokescreen->getIncludeKey());
     }
 
     public function test_default_serializer_can_be_configured_with_class_name()
@@ -459,9 +476,9 @@ class SmokescreenTest extends TestCase
             ->setMethods(['serializeWith'])
             ->disableOriginalConstructor()
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('serializeWith')
-            ->with($this->equalTo(new DefaultSerializer()));
+            ->with(self::equalTo(new DefaultSerializer()));
         $stub->__construct(
             new \Rexlabs\Smokescreen\Smokescreen(),
             ['default_serializer' => DefaultSerializer::class]
@@ -470,15 +487,15 @@ class SmokescreenTest extends TestCase
 
     public function test_default_serializer_can_be_configured_with_object()
     {
-        $obj = new class() extends DefaultSerializer {
+        $obj = new class () extends DefaultSerializer {
         };
         $stub = $this->getMockBuilder(Smokescreen::class)
             ->setMethods(['serializeWith'])
             ->disableOriginalConstructor()
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('serializeWith')
-            ->with($this->equalTo($obj));
+            ->with(self::equalTo($obj));
         $stub->__construct(
             new \Rexlabs\Smokescreen\Smokescreen(),
             ['default_serializer' => $obj]
@@ -487,16 +504,19 @@ class SmokescreenTest extends TestCase
 
     public function test_default_transformer_resolver_can_be_configured_with_class_name()
     {
-        $this->app->bind(TransformerResolver::class, function () {
-            return new TransformerResolver('', '');
-        });
+        $this->app->bind(
+            TransformerResolver::class,
+            function () {
+                return new TransformerResolver('', '');
+            }
+        );
         $stub = $this->getMockBuilder(Smokescreen::class)
             ->setMethods(['resolveTransformerVia'])
             ->disableOriginalConstructor()
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('resolveTransformerVia')
-            ->with($this->equalTo(new TransformerResolver('', '')));
+            ->with(self::equalTo(new TransformerResolver('', '')));
         $stub->__construct(
             new \Rexlabs\Smokescreen\Smokescreen(),
             ['default_transformer_resolver' => TransformerResolver::class]
@@ -505,15 +525,15 @@ class SmokescreenTest extends TestCase
 
     public function test_default_transformer_resolver_can_be_configured_with_object()
     {
-        $obj = new class('', '') extends TransformerResolver {
+        $obj = new class ('', '') extends TransformerResolver {
         };
         $stub = $this->getMockBuilder(Smokescreen::class)
             ->setMethods(['resolveTransformerVia'])
             ->disableOriginalConstructor()
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('resolveTransformerVia')
-            ->with($this->equalTo($obj));
+            ->with(self::equalTo($obj));
         $stub->__construct(
             new \Rexlabs\Smokescreen\Smokescreen(),
             ['default_transformer_resolver' => $obj]
@@ -527,7 +547,7 @@ class SmokescreenTest extends TestCase
 
         $smokescreen = Smokescreen::make();
         $smokescreen->setRequest($request);
-        $this->assertEquals($request, $smokescreen->request());
+        self::assertEquals($request, $smokescreen->request());
     }
 
     public function test_it_implements_responsable_interface()
@@ -535,9 +555,9 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make();
         $smokescreen->collection([]);
         $response = $smokescreen->toResponse(request());
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertInstanceOf(\stdClass::class, $response->getData());
-        $this->assertEquals([], $response->getData()->data);
+        self::assertInstanceOf(JsonResponse::class, $response);
+        self::assertInstanceOf(\stdClass::class, $response->getData());
+        self::assertEquals([], $response->getData()->data);
     }
 
     public function test_can_modify_response()
@@ -550,11 +570,12 @@ class SmokescreenTest extends TestCase
                     ->setStatusCode(418, "I'm a teapot");
             }
         );
-        $this->assertInstanceOf(JsonResponse::class, $smokescreen->response());
-        $this->assertEquals('Some Header', $smokescreen->response()->headers->get('X-Some-Header'));
-        $this->assertEquals(
-            418, $smokescreen->response()
-            ->getStatusCode()
+        self::assertInstanceOf(JsonResponse::class, $smokescreen->response());
+        self::assertEquals('Some Header', $smokescreen->response()->headers->get('X-Some-Header'));
+        self::assertEquals(
+            418,
+            $smokescreen->response()
+                ->getStatusCode()
         );
     }
 
@@ -563,22 +584,24 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make();
         $smokescreen->collection([]);
         $response = $smokescreen->response(
-            418, [
+            418,
+            [
             'X-Some-Header' => 'Some Header',
-        ]
+            ]
         );
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals('Some Header', $response->headers->get('X-Some-Header'));
-        $this->assertEquals(418, $response->getStatusCode());
+        self::assertInstanceOf(JsonResponse::class, $response);
+        self::assertEquals('Some Header', $response->headers->get('X-Some-Header'));
+        self::assertEquals(418, $response->getStatusCode());
 
         // Return a new response but cached value is still returned
         $response = $smokescreen->response(
-            200, [
+            200,
+            [
             'X-Some-Header' => 'Another Value',
-        ]
+            ]
         );
-        $this->assertEquals('Some Header', $response->headers->get('X-Some-Header'));
-        $this->assertEquals(418, $response->getStatusCode());
+        self::assertEquals('Some Header', $response->headers->get('X-Some-Header'));
+        self::assertEquals(418, $response->getStatusCode());
     }
 
     public function test_fresh_response_is_not_cached()
@@ -586,22 +609,24 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make();
         $smokescreen->collection([]);
         $response = $smokescreen->response(
-            418, [
+            418,
+            [
             'X-Some-Header' => 'Some Header',
-        ]
+            ]
         );
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals('Some Header', $response->headers->get('X-Some-Header'));
-        $this->assertEquals(418, $response->getStatusCode());
+        self::assertInstanceOf(JsonResponse::class, $response);
+        self::assertEquals('Some Header', $response->headers->get('X-Some-Header'));
+        self::assertEquals(418, $response->getStatusCode());
 
         // Return a new response but cached value is still returned
         $response = $smokescreen->freshResponse(
-            200, [
+            200,
+            [
             'X-Some-Header' => 'Another Value',
-        ]
+            ]
         );
-        $this->assertEquals('Another Value', $response->headers->get('X-Some-Header'));
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals('Another Value', $response->headers->get('X-Some-Header'));
+        self::assertEquals(200, $response->getStatusCode());
     }
 
     public function test_can_override_the_transformer_resolver()
@@ -612,11 +637,12 @@ class SmokescreenTest extends TestCase
         // Mock a resolver, and test that the resolve() method is called.
         $stub = $this->getMockBuilder(TransformerResolverInterface::class)
             ->getMock();
-        $stub->expects($this->once())
+        $stub->expects(self::once())
             ->method('resolve');
 
         $smokescreen = Smokescreen::make(
-            null, [
+            null,
+            [
                 'transformer_namespace' => 'Rexlabs\\Laravel\\Smokescreen\\Tests\\Stubs\\Transformers',
             ]
         );
@@ -628,7 +654,7 @@ class SmokescreenTest extends TestCase
 
     public function test_can_handle_null_resource()
     {
-        $transformer = new class() extends AbstractTransformer {
+        $transformer = new class () extends AbstractTransformer {
             protected $includes = [
                 'user' => 'default',
                 'comments' => 'default',
@@ -652,32 +678,36 @@ class SmokescreenTest extends TestCase
 
         $defaultSerializer = new DefaultSerializer();
         $smokescreen = Smokescreen::make();
-        $smokescreen->item([
+        $smokescreen->item(
+            [
             'id' => '1234',
             'email' => 'bob@example.com',
-        ], $transformer);
+            ],
+            $transformer
+        );
         $output = $smokescreen->toArray();
-        $this->assertEquals($defaultSerializer->nullCollection(), $output['comments']);
-        $this->assertEquals($defaultSerializer->nullItem(), $output['user']);
+        self::assertEquals($defaultSerializer->nullCollection(), $output['comments']);
+        self::assertEquals($defaultSerializer->nullItem(), $output['user']);
     }
 
     protected function createQueryBuilder(): \Illuminate\Database\Query\Builder
     {
         return new \Illuminate\Database\Query\Builder(
-            $this->createMock(ConnectionInterface::class), $this->createMock(PostgresGrammar::class),
+            $this->createMock(ConnectionInterface::class),
+            $this->createMock(PostgresGrammar::class),
             $this->createMock(PostgresProcessor::class)
         );
     }
 
     protected function createModel(): Model
     {
-        return new class() extends Model {
+        return new class () extends Model {
         };
     }
 
     protected function createTransformer(): AbstractTransformer
     {
-        return new class() extends AbstractTransformer {
+        return new class () extends AbstractTransformer {
             protected $includes = [
                 'user',
                 'comments',
@@ -711,7 +741,7 @@ class SmokescreenTest extends TestCase
 
     protected function createSerializer(): DefaultSerializer
     {
-        return new class() extends DefaultSerializer {
+        return new class () extends DefaultSerializer {
             public function collection($resourceKey, array $data): array
             {
                 return ['custom_serialize' => $data];
@@ -737,14 +767,18 @@ class SmokescreenTest extends TestCase
         $smokescreen = Smokescreen::make()
             ->transform($data, $this->createTransformer())
             // Add a a pagination array nested under meta
-            ->inject('meta.pagination', [
+            ->inject(
+                'meta.pagination',
+                [
                 'next' => 'test1',
                 'prev' => 'test2',
-            ])
+                ]
+            )
             // Insert a property into the first element in the collection
             ->inject('data.0.new_property', 'val');
 
-        $this->assertEquals([
+        self::assertEquals(
+            [
                 'data' => [
                     [
                         'id'           => 1,

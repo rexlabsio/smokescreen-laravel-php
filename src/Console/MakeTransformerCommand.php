@@ -90,13 +90,16 @@ class MakeTransformerCommand extends GeneratorCommand
     protected function generateAllTransformers()
     {
         $directory = $this->getModelDirectory();
-        $models = (new ModelsFinder)->findInDirectory($directory);
+        $models = (new ModelsFinder())->findInDirectory($directory);
 
         foreach ($models as $model) {
-            $this->call('make:transformer', [
+            $this->call(
+                'make:transformer',
+                [
                 'model' => $model,
                 '--force' => $this->option('force'),
-            ]);
+                ]
+            );
         }
     }
 
@@ -105,7 +108,7 @@ class MakeTransformerCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getModelDirectory() : string
+    protected function getModelDirectory(): string
     {
         $relativePath = $this->option('directory') ?: config('smokescreen.models_directory', 'app');
 

@@ -18,15 +18,16 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.4",
     "rexlabs/smokescreen": "^2.0",
-    "laravel/framework": "^5.6|^6.0|^7.0|^8.0",
+    "laravel/framework": "^8.0",
     "doctrine/dbal": "^2.5|^2.7"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "orchestra/testbench": "^3.0|^4.0|^5.0|^5.0",
-    "phpunit/phpunit": "^6.5.7|^7.0|^8.0"
+    "orchestra/testbench": "^6.0",
+    "phpunit/phpunit": "^9.0",
+    "squizlabs/php_codesniffer": "^3.5"
   },
   "autoload": {
     "psr-4": {
@@ -50,8 +51,9 @@
   },
   "scripts": {
     "test": "phpunit --color=always",
-    "tests": "phpunit --color=always",
-    "coverage": "phpunit --coverage-html ./tests/report"
+    "coverage": "phpunit --coverage-html ./tests/report",
+    "lint-check": "phpcs -p -s --cache src tests",
+    "lint": "phpcbf -p -s src tests"
   },
   "license": "MIT"
 }

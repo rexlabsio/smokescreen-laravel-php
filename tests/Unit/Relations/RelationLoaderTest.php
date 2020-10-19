@@ -22,7 +22,7 @@ class RelationLoaderTest extends TestCase
 
     protected function createTransformer(): AbstractTransformer
     {
-        return new class() extends AbstractTransformer {
+        return new class () extends AbstractTransformer {
             protected $includes = [
                 'users'    => 'relation',
                 'comments' => 'relation:boo',

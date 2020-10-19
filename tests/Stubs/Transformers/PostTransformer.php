@@ -28,13 +28,15 @@ class PostTransformer extends AbstractTransformer
 
     public function includeComments(Post $post)
     {
-        return $this->collection([
+        return $this->collection(
+            [
             [
                 'comments' => 'Great post',
             ],
             [
                 'comments' => 'I agree',
             ],
-        ]);
+            ]
+        );
     }
 }

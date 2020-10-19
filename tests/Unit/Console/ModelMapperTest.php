@@ -11,46 +11,45 @@ class ModelMapperTest extends TestCase
 {
     use UsesModelStubs;
 
-    public function test_get_includes()
+    public function test_get_includes(): void
     {
         $this->createSchemas();
         $this->createModels();
 
         $modelInspector = new ModelMapper(Post::find(1));
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'user'     => 'relation|item',
             'comments' => 'relation|collection',
-        ], $modelInspector->getIncludes());
+            ],
+            $modelInspector->getIncludes()
+        );
     }
 
-    public function test_get_declared_properties()
+    public function test_get_declared_properties(): void
     {
         $this->createSchemas();
         $this->createModels();
 
         $modelInspector = new ModelMapper(Post::find(1));
         $props = $modelInspector->getDeclaredProperties();
-        $this->assertArraySubset([
+        $expected = [
+
             'id' => 'integer',
-        ], $props);
-        $this->assertArraySubset([
             'title' => 'string',
-        ], $props);
-        $this->assertArraySubset([
             'body' => 'string',
-        ], $props);
-        $this->assertArraySubset([
             'created_at' => 'datetime',
-        ], $props);
-        $this->assertArraySubset([
             'updated_at' => 'datetime',
-        ], $props);
-        $this->assertArraySubset([
             'origin' => 'string',
-        ], $props);
+        ];
+
+        foreach ($expected as $key => $value) {
+            self::assertArrayHasKey($key, $props);
+            self::assertEquals($value, $props[$key]);
+        }
     }
 
-    public function test_get_default_properties()
+    public function test_get_default_properties(): void
     {
         $this->createSchemas();
         $this->createModels();

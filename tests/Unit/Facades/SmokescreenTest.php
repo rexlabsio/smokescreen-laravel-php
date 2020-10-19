@@ -10,13 +10,17 @@ use Rexlabs\Smokescreen\Serializer\SerializerInterface;
 
 class SmokescreenTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_returns_an_instance()
     {
         $this->assertInstanceOf(LaravelSmokescreen::class, Smokescreen::transform([]));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function can_serialize_with_default_serializer()
     {
         $data = [
@@ -31,12 +35,17 @@ class SmokescreenTest extends TestCase
         ];
 
         $result = Smokescreen::transform($data)->toArray();
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'data' => $data,
-        ], $result);
+            ],
+            $result
+        );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function can_override_serializer_via_config()
     {
         $serializer = $this->createSerializer();
@@ -53,14 +62,17 @@ class SmokescreenTest extends TestCase
         ];
 
         $result = Smokescreen::transform($data)->serializeWith($serializer)->toArray();
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'custom_serialize' => $data,
-        ], $result);
+            ],
+            $result
+        );
     }
 
     protected function createSerializer(): SerializerInterface
     {
-        return new class() extends DefaultSerializer {
+        return new class () extends DefaultSerializer {
             public function collection($resourceKey, array $data): array
             {
                 return ['custom_serialize' => $data];

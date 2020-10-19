@@ -51,7 +51,9 @@ class ModelMapper
         'bigint'   => 'integer',
     ];
 
-    /** @var Model */
+    /**
+     * @var Model
+     */
     protected $model;
 
     public function __construct(Model $model)
@@ -70,15 +72,19 @@ class ModelMapper
     {
         $includes = [];
         collect((new ReflectionClass($this->getModel()))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->filter(function (ReflectionMethod $method) {
-                // We're not interested in inherited methods
-                return $method->getDeclaringClass()->getName() === $this->getModelClass();
-            })->each(function (ReflectionMethod $method) use (&$includes) {
-                // Only include if we can resolve a resource type
-                if (($type = $this->getResourceType($method)) !== null) {
-                    $includes[$method->getName()] = "relation|{$type}";
+            ->filter(
+                function (ReflectionMethod $method) {
+                    // We're not interested in inherited methods
+                    return $method->getDeclaringClass()->getName() === $this->getModelClass();
                 }
-            });
+            )->each(
+                function (ReflectionMethod $method) use (&$includes) {
+                    // Only include if we can resolve a resource type
+                    if (($type = $this->getResourceType($method)) !== null) {
+                        $includes[$method->getName()] = "relation|{$type}";
+                    }
+                }
+            );
 
         return $includes;
     }
@@ -199,9 +205,15 @@ class ModelMapper
             list($statement, $returnTypes) = $match;
 
             // Build a regex suitable for matching our relationship keys. EG. hasOne|hasMany...
-            $keyPattern = implode('|', array_map(function ($key) {
-                return preg_quote($key, '/');
-            }, array_keys($this->relationsMap)));
+            $keyPattern = implode(
+                '|',
+                array_map(
+                    function ($key) {
+                        return preg_quote($key, '/');
+                    },
+                    array_keys($this->relationsMap)
+                )
+            );
             foreach (explode('|', $returnTypes) as $returnType) {
                 if (preg_match("/($keyPattern)\$/i", $returnType, $match)) {
                     return $this->relationsMap[$match[1]] ?? null;
@@ -230,7 +242,7 @@ class ModelMapper
             $returnStmt = $match[1];
             foreach (array_keys($this->relationsMap) as $returnType) {
                 // Find "->hasMany(" etc.
-                if (preg_match('/->'.preg_quote($returnType, '/').'\(/i', $returnStmt)) {
+                if (preg_match('/->' . preg_quote($returnType, '/') . '\(/i', $returnStmt)) {
                     return $this->relationsMap[$returnType];
                 }
             }
