@@ -20,13 +20,13 @@
   "require": {
     "php": ">=7.1",
     "rexlabs/smokescreen": "^2.0",
-    "laravel/framework": "^5.6|^6.0|^7.0",
+    "laravel/framework": "^5.6|^6.0|^7.0|^8.0",
     "doctrine/dbal": "^2.5|^2.7"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0",
-    "phpunit/phpunit": "^6.5.7|^7.0|^8.0"
+    "orchestra/testbench": "^3.0|^4.0|^5.0|^5.0",
+    "phpunit/phpunit": "^6.5.7|^7.0|^8.0|^9.0"
   },
   "autoload": {
     "psr-4": {

@@ -2,6 +2,10 @@
 
 Changelog for Laravel Smokescreen
 
+## 2.0.2
+
+- Update to laravel 8.0
+
 ## 2.0.1
 
 - Update to laravel 7.0
