@@ -20,7 +20,7 @@
   "require": {
     "php": ">=7.4",
     "rexlabs/smokescreen": "^2.0",
-    "laravel/framework": "^8.0|^9.0",
+    "laravel/framework": "^8.0|^9.0|^10.0",
     "doctrine/dbal": "^2.5|^2.7|^3.0"
   },
   "require-dev": {
