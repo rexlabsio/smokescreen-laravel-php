@@ -2,6 +2,12 @@
 
 Changelog for Laravel Smokescreen
 
+## 3.0.1
+
+- Set strict php support for php 7.4-8.3
+- Bump min smokescreen-php version to 2.1
+- Add github pipelines
+
 ## 3.0.0
 
 - Update to php7.4 with laravel 8.0
