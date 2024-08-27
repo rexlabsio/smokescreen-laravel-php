@@ -17,9 +17,9 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected $signature = 'make:transformer
         {model? : The name of the model to transform. e.g. User} 
-        {-f|--force : Overwrite an existing transformer}
-        {-d|--directory= : Specify the models directory }
-        {-a|--all : Generate a transformer for all models. }';
+        {--f|force : Overwrite an existing transformer}
+        {--d|directory= : Specify the models directory}
+        {--a|all : Generate a transformer for all models.}';
 
     /**
      * The console command description.
