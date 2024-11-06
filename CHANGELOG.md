@@ -2,6 +2,10 @@
 
 Changelog for Laravel Smokescreen
 
+## 4.0.0
+
+- Ensure Include Key is Only Pulled From Query
+
 ## 3.0.1
 
 - Set strict php support for php 7.4-8.3
