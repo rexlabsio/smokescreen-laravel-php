@@ -2,6 +2,10 @@
 
 Changelog for Laravel Smokescreen
 
+## 4.2.0
+
+* DBAL 4.0 support
+
 ## 4.1.0
 
 * PHP 8.4 support 
