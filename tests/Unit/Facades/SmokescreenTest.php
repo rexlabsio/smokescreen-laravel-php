@@ -2,6 +2,7 @@
 
 namespace Rexlabs\Laravel\Smokescreen\Tests\Unit\Facades;
 
+use PHPUnit\Framework\Attributes\Test;
 use Rexlabs\Laravel\Smokescreen\Facades\Smokescreen;
 use Rexlabs\Laravel\Smokescreen\Smokescreen as LaravelSmokescreen;
 use Rexlabs\Laravel\Smokescreen\Tests\TestCase;
@@ -10,17 +11,13 @@ use Rexlabs\Smokescreen\Serializer\SerializerInterface;
 
 class SmokescreenTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_an_instance()
     {
         $this->assertInstanceOf(LaravelSmokescreen::class, Smokescreen::transform([]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function can_serialize_with_default_serializer()
     {
         $data = [
@@ -43,9 +40,7 @@ class SmokescreenTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function can_override_serializer_via_config()
     {
         $serializer = $this->createSerializer();

@@ -6,12 +6,20 @@ on:
 
 jobs:
   test:
-    name: Run tests
+    name: Run tests (PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }})
     runs-on: ubuntu-latest
+    # One job per supported PHP and Laravel pair. Laravel lines that no longer receive
+    # security fixes are not installable (Composer refuses versions with open advisories),
+    # so the matrix follows Laravel's support: 12 on PHP 8.2+, 13 on PHP 8.3+.
     strategy:
       fail-fast: false
       matrix:
-        php: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+        include:
+          - { php: "8.2", laravel: "12", testbench: "^10.0" }
+          - { php: "8.3", laravel: "12", testbench: "^10.0" }
+          - { php: "8.4", laravel: "12", testbench: "^10.0" }
+          - { php: "8.3", laravel: "13", testbench: "^11.0" }
+          - { php: "8.4", laravel: "13", testbench: "^11.0" }
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           docker run -v $(pwd):/app php:${{ matrix.php }}-cli-alpine /bin/sh -c \
-            'cd /app && curl -sS https://getcomposer.org/installer | php -- --filename=composer && php composer update --prefer-stable --prefer-dist --no-interaction && rm composer'
+            'cd /app && curl -sS https://getcomposer.org/installer | php -- --filename=composer && php composer require --dev --no-update "orchestra/testbench:${{ matrix.testbench }}" && php composer update --prefer-stable --prefer-dist --no-interaction && rm composer'
 
       - name: Run tests
         run: |

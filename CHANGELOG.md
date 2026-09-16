@@ -2,6 +2,10 @@
 
 Changelog for Laravel Smokescreen
 
+## 4.4.0
+
+* Laravel 13.0 support
+
 ## 4.3.0
 
 * Laravel 12.0 support
