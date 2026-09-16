@@ -51,6 +51,12 @@ class ModelMapper
         'float'      => 'float',
         'double'     => 'float',
         'numeric'    => 'float',
+        // Postgres reports its own names for the types the entries above do not cover.
+        'uuid'        => 'string',
+        'jsonb'       => 'array',
+        'float4'      => 'float',
+        'float8'      => 'float',
+        'timestamptz' => 'datetime',
         'guid'     => 'string',
         'boolean'  => 'boolean',
         'datetime' => 'datetime',
