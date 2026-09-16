@@ -39,11 +39,13 @@ class ModelMapper
      */
     protected $schemaTypesMap = [
         // Laravel 11 dropped Doctrine DBAL: Schema::getColumnType() now returns the
-        // database's own type name (varchar, tinyint, ...) rather than DBAL's.
+        // database's own type name (varchar, tinyint, ...) rather than DBAL's. The full
+        // definition is consulted first so that boolean(), which creates tinyint(1),
+        // is told apart from tinyInteger(), which is a number.
         'varchar'    => 'string',
         'char'       => 'string',
-        'tinyint'    => 'boolean',
         'tinyint(1)' => 'boolean',
+        'tinyint'    => 'integer',
         'int'        => 'integer',
         'timestamp'  => 'datetime',
         'float'      => 'float',
@@ -110,8 +112,11 @@ class ModelMapper
         $props = [];
         $table = $this->getModel()->getTable();
         foreach (Schema::getColumnListing($table) as $column) {
-            $type = Schema::getColumnType($table, $column);
-            $props[$column] = $this->schemaTypesMap[$type] ?? null;
+            // Laravel 11+ gives the full definition ("tinyint(1)") on request and the bare
+            // type name ("tinyint") otherwise; earlier versions ignore the extra argument.
+            $props[$column] = $this->schemaTypesMap[Schema::getColumnType($table, $column, true)]
+                ?? $this->schemaTypesMap[Schema::getColumnType($table, $column)]
+                ?? null;
         }
 
         return $props;

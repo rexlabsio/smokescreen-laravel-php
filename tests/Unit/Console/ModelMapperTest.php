@@ -41,6 +41,8 @@ class ModelMapperTest extends TestCase
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'origin' => 'string',
+            'published' => 'boolean',
+            'rating' => 'integer',
         ];
 
         foreach ($expected as $key => $value) {

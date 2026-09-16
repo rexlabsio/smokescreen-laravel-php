@@ -37,6 +37,8 @@ trait UsesModelStubs
                 $table->string('title');
                 $table->text('body');
                 $table->uuid('origin')->nullable();
+                $table->boolean('published')->default(false);
+                $table->tinyInteger('rating')->nullable();
                 $table->timestamps();
             }
         );
