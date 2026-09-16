@@ -38,6 +38,17 @@ class ModelMapper
      * @var array
      */
     protected $schemaTypesMap = [
+        // Laravel 11 dropped Doctrine DBAL: Schema::getColumnType() now returns the
+        // database's own type name (varchar, tinyint, ...) rather than DBAL's.
+        'varchar'    => 'string',
+        'char'       => 'string',
+        'tinyint'    => 'boolean',
+        'tinyint(1)' => 'boolean',
+        'int'        => 'integer',
+        'timestamp'  => 'datetime',
+        'float'      => 'float',
+        'double'     => 'float',
+        'numeric'    => 'float',
         'guid'     => 'string',
         'boolean'  => 'boolean',
         'datetime' => 'datetime',

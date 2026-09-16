@@ -284,7 +284,7 @@ class SmokescreenTest extends TestCase
     {
         $loader = new RelationLoader();
         $stub = $this->getMockBuilder(\Rexlabs\Smokescreen\Smokescreen::class)
-            ->setMethods(['setRelationLoader'])
+            ->onlyMethods(['setRelationLoader'])
             ->getMock();
         $stub->expects(self::once())
             ->method('setRelationLoader')
@@ -332,7 +332,7 @@ class SmokescreenTest extends TestCase
         ];
         $includeStr = 'user,comments';
         $stub = $this->getMockBuilder(\Rexlabs\Smokescreen\Smokescreen::class)
-            ->setMethods(['parseIncludes'])
+            ->onlyMethods(['parseIncludes'])
             ->getMock();
         $stub->expects(self::once())
             ->method('parseIncludes')
@@ -473,7 +473,7 @@ class SmokescreenTest extends TestCase
     public function test_default_serializer_can_be_configured_with_class_name()
     {
         $stub = $this->getMockBuilder(Smokescreen::class)
-            ->setMethods(['serializeWith'])
+            ->onlyMethods(['serializeWith'])
             ->disableOriginalConstructor()
             ->getMock();
         $stub->expects(self::once())
@@ -490,7 +490,7 @@ class SmokescreenTest extends TestCase
         $obj = new class () extends DefaultSerializer {
         };
         $stub = $this->getMockBuilder(Smokescreen::class)
-            ->setMethods(['serializeWith'])
+            ->onlyMethods(['serializeWith'])
             ->disableOriginalConstructor()
             ->getMock();
         $stub->expects(self::once())
@@ -511,7 +511,7 @@ class SmokescreenTest extends TestCase
             }
         );
         $stub = $this->getMockBuilder(Smokescreen::class)
-            ->setMethods(['resolveTransformerVia'])
+            ->onlyMethods(['resolveTransformerVia'])
             ->disableOriginalConstructor()
             ->getMock();
         $stub->expects(self::once())
@@ -528,7 +528,7 @@ class SmokescreenTest extends TestCase
         $obj = new class ('', '') extends TransformerResolver {
         };
         $stub = $this->getMockBuilder(Smokescreen::class)
-            ->setMethods(['resolveTransformerVia'])
+            ->onlyMethods(['resolveTransformerVia'])
             ->disableOriginalConstructor()
             ->getMock();
         $stub->expects(self::once())
