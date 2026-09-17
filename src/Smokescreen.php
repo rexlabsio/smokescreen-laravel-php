@@ -110,7 +110,7 @@ class Smokescreen implements \JsonSerializable, Jsonable, Arrayable, Responsable
      *
      * @return static
      */
-    public static function make(\Rexlabs\Smokescreen\Smokescreen $smokescreen = null, array $config = [])
+    public static function make(?\Rexlabs\Smokescreen\Smokescreen $smokescreen = null, array $config = [])
     {
         return new static($smokescreen ?? new \Rexlabs\Smokescreen\Smokescreen(), $config);
     }

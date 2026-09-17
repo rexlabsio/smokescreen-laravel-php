@@ -2,6 +2,11 @@
 
 Changelog for Laravel Smokescreen
 
+## 4.5.0
+
+* PHP 8.5 support
+* `Smokescreen::make()` declares its `$smokescreen` parameter nullable (implicit nullability is deprecated in PHP 8.4)
+
 ## 4.4.0
 
 * Laravel 13.0 support
