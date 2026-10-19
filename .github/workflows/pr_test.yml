@@ -7,7 +7,7 @@ on:
 jobs:
   test:
     name: Run tests (PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # One job per supported PHP and Laravel pair. Laravel lines that no longer receive
     # security fixes are not installable (Composer refuses versions with open advisories),
     # so the matrix follows Laravel's support: 12 on PHP 8.2+, 13 on PHP 8.3+.
